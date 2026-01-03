@@ -1,59 +1,145 @@
-# Specs Improvement Plan
+# Specifications Improvement Plan
 
-Transform base OmniFocus-style specs into AI-native specifications for "low-value-material".
+This document tracks the translation of base specs into AI-native enhanced specifications for "low-value-material" - an OmniFocus clone that is fully AI native.
 
-## Completed Research
+## Core Platform Principles
 
-### AI Libraries Researched (2026-01-03)
+- **Native apps**: Desktop (with global launcher hotkey) and mobile
+- **API-first**: Data stored behind an API, syncs anywhere
+- **Modern database**: No archive mechanism needed - use a real database
+- **MCP/Tool integration**: Tasks can connect to external tools via MCP
 
-1. **BoundaryML/BAML** - Domain-specific language for structured LLM outputs
-   - Type-safe schema definitions (classes, enums with descriptions)
-   - Functions that embed prompts directly with output format injection
-   - Multi-model support with client switching
-   - Perfect for: Task extraction, inbox processing, organization suggestions
+## Improvement Priority Queue
 
-2. **Vercel AI SDK** - TypeScript toolkit for AI applications
-   - Tool calling with Zod schema validation
-   - Streaming support for real-time updates
-   - Multi-step agent workflows with `streamText` chaining
-   - Parallel processing patterns for independent operations
-   - Perfect for: Task system tools, real-time AI interactions
+### Priority 0: RESEARCH BAML FOR AI PROCESSING
+**Status**: COMPLETED
 
-3. **Claude Agent SDK** - SDK for building AI agents
-   - Custom tool definitions via `@tool` decorator
-   - MCP server integration for external tools
-   - Session management and streaming input/output
-   - Allowed tools configuration for security
-   - Perfect for: Complex task execution, weekly reviews, task dispatch
+See `improved_specs/ai-processing-reference.md` for:
+- BAML structured extraction patterns for task capture
+- Claude Agent SDK tool definitions for task management
+- Integration architecture combining both approaches
 
-## Improved Specs Created
+### Priority 1: AI-Powered Capture & Processing (HIGH)
+**Status**: COMPLETED
+**Base Specs**: inbox.md, task.md
 
-### `improved_specs/ai-integration.md` (2026-01-03)
-Comprehensive AI integration layer specification covering:
-- BAML-inspired schema definitions for task extraction
-- Vercel AI SDK-style tool definitions for task operations
-- Claude Agent SDK patterns for agent dispatch
-- MCP server connectivity for task execution
-- AI-assisted workflows (capture, review, next actions)
+See `improved_specs/ai-capture.md` for full specification.
 
-## Remaining Work
+AI enhancements:
+- [x] Natural language task parsing ("Call mom tomorrow at 3pm" -> task with due date)
+- [x] Voice-to-task with intent detection
+- [x] Auto-suggestion of project/tag assignment based on content
+- [x] Smart duplicate detection
+- [x] Context extraction from pasted content (emails, URLs, etc.)
+- [x] Global launcher hotkey integration for desktop
+- [x] Mobile share sheet with AI processing
 
-### Priority 1: Core Data Model AI Extensions
-- [ ] Extend `task.md` with AI fields (extraction confidence, suggested_by, etc.)
-- [ ] Extend `project.md` with AI planning capabilities
-- [ ] Extend `inbox.md` with AI processing queue
+### Priority 2: Intelligent Task Suggestions (HIGH)
+**Status**: Not Started
+**Base Specs**: task.md, availability.md, perspectives.md
 
-### Priority 2: AI-Specific Specifications
-- [ ] `improved_specs/ai-config.md` - Model configuration, provider switching
-- [ ] `improved_specs/ai-learning.md` - User pattern learning, personalization
-- [ ] `improved_specs/nl-query.md` - Natural language task querying
+AI enhancements:
+- [ ] "What should I work on next?" recommendations
+- [ ] Energy/time-based task suggestions
+- [ ] Context-aware suggestions (location, calendar, time of day)
+- [ ] Proactive task surfacing based on patterns
+- [ ] Deadline risk assessment and warnings
 
-### Priority 3: Execution Capabilities
-- [ ] `improved_specs/mcp-registry.md` - Available MCP servers, tool discovery
-- [ ] `improved_specs/agent-tasks.md` - Agent task queue, execution monitoring
-- [ ] `improved_specs/automation.md` - Trigger-based task automation
+### Priority 3: Smart Project & Task Organization (MEDIUM)
+**Status**: Not Started
+**Base Specs**: project.md, folder.md, tag.md
 
-### Priority 4: Integration Points
-- [ ] `improved_specs/voice.md` - Voice capture and commands
-- [ ] `improved_specs/email-integration.md` - Email-to-task with AI parsing
-- [ ] `improved_specs/calendar-sync.md` - Calendar integration with AI scheduling
+AI enhancements:
+- [ ] Auto-project creation from task clusters
+- [ ] Tag suggestions based on content analysis
+- [ ] Project template recommendations
+- [ ] Automatic task breakdown suggestions
+- [ ] Related task discovery
+
+### Priority 4: AI-Assisted Review Process (MEDIUM)
+**Status**: Not Started
+**Base Specs**: project.md (review system)
+
+AI enhancements:
+- [ ] Smart review prioritization
+- [ ] Stalled project detection with suggested actions
+- [ ] "Zombie" task identification (old, untouched)
+- [ ] Project health scoring
+- [ ] Automated cleanup suggestions
+
+### Priority 5: MCP/Tool Integration Layer (MEDIUM)
+**Status**: Not Started
+**Base Specs**: task.md (operations)
+
+AI enhancements:
+- [ ] Task automation via connected tools
+- [ ] External data fetching for task context
+- [ ] Automated task creation from tool events
+- [ ] Progress tracking via tool integrations
+- [ ] Smart notifications via connected channels
+
+### Priority 6: Predictive Scheduling (LOW)
+**Status**: Not Started
+**Base Specs**: due-dates.md, defer-dates.md, repeat.md
+
+AI enhancements:
+- [ ] Duration estimation based on similar tasks
+- [ ] Optimal defer date suggestions
+- [ ] Repeat pattern detection from behavior
+- [ ] Calendar-aware scheduling
+- [ ] Workload balancing suggestions
+
+### Priority 7: Natural Language Search & Queries (LOW)
+**Status**: Not Started
+**Base Specs**: perspectives.md
+
+AI enhancements:
+- [ ] Semantic search across all items
+- [ ] Natural language perspective creation
+- [ ] Conversational task queries
+- [ ] Smart filtering suggestions
+
+## Progress Log
+
+| Date | Item | Status | Notes |
+|------|------|--------|-------|
+| 2026-01-03 | Priority 0: BAML/Agent SDK Research | COMPLETED | Created `ai-processing-reference.md` with BAML schemas and Claude Agent SDK patterns |
+| 2026-01-03 | Priority 1: AI-Powered Capture | COMPLETED | Created `ai-capture.md` with NLP parsing, voice input, duplicate detection, global launcher |
+
+## Implementation Notes
+
+### Global Launcher Hotkey (Desktop)
+- System-wide keyboard shortcut to open quick capture
+- Should support text and voice input
+- AI processes input to extract structured task data
+- Minimal UI - just capture and go
+
+### Voice Input
+- Native speech-to-text on mobile and desktop
+- AI post-processing to extract intent, dates, projects
+- Confirmation UI before task creation
+- Background transcription support
+
+### MCP Integration Architecture
+Tasks can have an `mcp_connections` field:
+```
+mcp_connections: [{
+  server_id: String,
+  tool_name: String,
+  config: Object,
+  trigger: "on_complete" | "on_create" | "on_due" | "manual"
+}]
+```
+
+This allows tasks to:
+- Execute tools when completed
+- Pull data from external sources
+- Create tasks from external events
+- Report progress to external systems
+
+
+## Wishlist (maintained by project manager)
+
+- text-or-voice to perspective generator
+- auto-tag
+- recurring tag cleanup and re-organization
