@@ -42,7 +42,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Spec | Status | File |
 |------|--------|------|
 | Focus Mode | ✅ Done | `specs/focus-mode.md` |
-| Quick Capture | Not Started | `specs/quick-capture.md` |
+| Quick Capture | ✅ Done | `specs/quick-capture.md` |
 | Search | Not Started | `specs/search.md` |
 | Batch Editing | Not Started | `specs/batch-editing.md` |
 
@@ -234,3 +234,17 @@ OmniFocus is a task management application built around the Getting Things Done 
   - iOS/macOS Focus Mode integration for automatic context switching
   - Keyboard shortcuts: ⌘⇧F for focus/unfocus
   - Settings: remember_focus, inbox_during_focus, search_respects_focus
+
+### 2026-01-03 - Iteration 15
+- Researched OmniFocus Quick Entry, Share Extension, and capture methods
+- Researched Siri integration, URL scheme, and Shortcuts actions
+- Created quick-capture.md specification covering:
+  - Seven capture methods: Quick Entry, Share Extension, Clippings, Siri, Email, URL Scheme, Shortcuts
+  - Quick Entry window with configurable fields and layout modes
+  - Context-aware capture from Safari, Mail, Files, Photos
+  - Siri commands: add task, due date, project/tag, repeat
+  - Shortcuts actions: Add OmniFocus Item, Add TaskPaper
+  - URL scheme parameters for automation
+  - Rapid entry with double-return for batch capture
+  - Settings: hotkey, layout, visible fields, defaults
+  - Offline capture with sync on reconnect
