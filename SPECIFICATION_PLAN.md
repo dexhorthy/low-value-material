@@ -70,6 +70,24 @@ OmniFocus is a task management application built around the Getting Things Done 
 |------|--------|------|
 | Backup & Data Management | ✅ Done | `specs/backup-data-management.md` |
 
+### Priority 9: AI-Enhanced Features
+| Spec | Status | File |
+|------|--------|------|
+| AI Capture | ✅ Done | `improved_specs/ai-capture.md` |
+| AI Scheduling | ✅ Done | `improved_specs/ai-scheduling.md` |
+| AI Notes & Attachments | ✅ Done | `improved_specs/ai-notes-attachments.md` |
+| AI Organization | ✅ Done | `improved_specs/ai-organization.md` |
+| AI Search | ✅ Done | `improved_specs/ai-search.md` |
+| AI Suggestions | ✅ Done | `improved_specs/ai-suggestions.md` |
+| AI Review | ✅ Done | `improved_specs/ai-review.md` |
+| AI Notifications | ✅ Done | `improved_specs/ai-notifications.md` |
+| AI Batch Editing | ✅ Done | `improved_specs/ai-batch-editing.md` |
+| AI Perspectives | ✅ Done | `improved_specs/ai-perspectives.md` |
+| AI Processing Reference | ✅ Done | `improved_specs/ai-processing-reference.md` |
+| MCP Integration | ✅ Done | `improved_specs/mcp-integration.md` |
+| AI Forecast | 📝 TODO | `improved_specs/ai-forecast.md` |
+| AI Focus | 📝 TODO | `improved_specs/ai-focus.md` |
+
 ## Research Sources
 - [OmniFocus Features](https://www.omnigroup.com/omnifocus/features)
 - [Zapier GTD + OmniFocus Guide](https://zapier.com/blog/getting-things-done-gtd-omnifocus/)
@@ -450,3 +468,24 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Best practices for users and implementers
 - Added Priority 8: Data Management to track data protection features
 - ALL SPECIFICATIONS COMPLETE (24 specifications across 8 priority tiers)
+
+### 2026-01-03 - Iteration 26
+- Identified need for AI-enhanced feature specifications in improved_specs/
+- Catalogued existing 11 AI-enhanced specs created previously
+- Researched AI-powered perspectives, natural language filtering, and context-aware views
+- Researched perspectivist approaches to NLP and multi-perspective reasoning frameworks
+- Researched context-aware systems and task-aware attention mechanisms
+- Created ai-perspectives.md specification covering:
+  - Natural language perspective creation with text interpretation
+  - Smart perspective suggestions based on workflow patterns
+  - Intelligent filter recommendations with context-awareness
+  - Perspective templates with adaptive customization
+  - Context-aware perspective switching with automatic triggers
+  - Usage-based learning and optimization
+  - Intelligent grouping and sorting recommendations
+  - Perspective discovery and search
+  - AI-assisted perspective maintenance and cleanup
+  - Duplicate detection and health checks
+  - Privacy controls and local processing
+- Added Priority 9: AI-Enhanced Features to track improved_specs/ specifications
+- Progress: 12 of 14 AI-enhanced specs complete (AI Forecast and AI Focus remain)
