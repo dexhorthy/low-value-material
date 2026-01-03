@@ -60,6 +60,11 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Rich Text Notes | ✅ Done | `specs/notes.md` |
 | Automation | ✅ Done | `specs/automation.md` |
 
+### Priority 7: Advanced Features
+| Spec | Status | File |
+|------|--------|------|
+| AI Capabilities | ✅ Done | `specs/ai-capabilities.md` |
+
 ## Research Sources
 - [OmniFocus Features](https://www.omnigroup.com/omnifocus/features)
 - [Zapier GTD + OmniFocus Guide](https://zapier.com/blog/getting-things-done-gtd-omnifocus/)
@@ -387,3 +392,25 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Example workflows: daily planning, weekly review, quick capture, project templates
 - Priority 6: Data Model Extensions is now COMPLETE
 - ALL SPECIFICATIONS COMPLETE (22 specifications across 6 priority tiers)
+
+### 2026-01-03 - Iteration 24
+- Researched OmniFocus 4.8+ AI capabilities and Apple Intelligence integration
+- Researched on-device Foundation Models framework and privacy approach
+- Researched LanguageModel API: Session, respond(), respondWithSchema()
+- Researched built-in AI plug-ins: Help Me Plan, Intelligent Assist, Help Me Estimate
+- Researched AI-powered project generation and task breakdown features
+- Researched custom AI plug-in development and distribution
+- Created ai-capabilities.md specification covering:
+  - Privacy-first on-device AI with Apple Foundation Models (macOS/iOS/iPadOS/visionOS 26+)
+  - LanguageModel API with text and structured JSON/XML responses
+  - Built-in features: Help Me Plan (task breakdown), Intelligent Assist (context-aware sub-tasks), Help Me Estimate (time estimates), Project Templates via AI, Clipboard Events
+  - AI-assisted workflows: project ideation, rapid creation, batch processing
+  - Custom plug-in development with JavaScript examples and schema definitions
+  - Platform requirements: Apple Silicon M1+/A17+, 8GB+ RAM, OS 26+
+  - Settings: AI preferences, per-feature controls, privacy controls
+  - Limitations: non-deterministic, limited context, no learning, language support
+  - Best practices: effective prompting, quality control, when to use AI
+  - Integration with perspectives, repeating tasks, review system, tags, sync
+  - Future directions: smarter scheduling, effort optimization, context awareness
+- Added Priority 7: Advanced Features to track emerging capabilities
+- ALL SPECIFICATIONS COMPLETE (23 specifications across 7 priority tiers)
