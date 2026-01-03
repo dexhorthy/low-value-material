@@ -54,18 +54,7 @@ When you paste or share content, the system intelligently extracts task informat
 
 ### Global Launcher (Desktop)
 
-System-wide hotkey (configurable, default: `Cmd+Shift+Space` / `Ctrl+Shift+Space`):
-
-```
-┌─────────────────────────────────────────┐
-│ 🎤 [                                  ] │
-│     Type or speak to capture...         │
-│                                         │
-│  Recent: @work  @home  Project Alpha    │
-└─────────────────────────────────────────┘
-```
-
-Launcher features:
+A system-wide hotkey opens a floating capture interface with:
 - Single-line input with AI expansion
 - Voice input toggle
 - Recent tags/projects for quick assignment
@@ -167,49 +156,20 @@ AI extraction requires user confirmation to prevent errors:
 
 ### Quick Confirm
 
-When the extraction is clear and accurate:
-```
-┌────────────────────────────────────────────┐
-│ ✓ Call mom about her birthday party        │
-│   📅 Tomorrow 3:00 PM                       │
-│   🏷️ @calls, family                        │
-│                                            │
-│ [Create Task]  [Edit...]  [Cancel]         │
-└────────────────────────────────────────────┘
-```
+When the extraction is clear and accurate, the user sees a summary of the extracted task (title, due date, tags) with options to create the task, edit details, or cancel.
 
 ### Detailed Review
 
-When you need to verify or adjust the extracted information:
-```
-┌────────────────────────────────────────────┐
-│ Title: [Call mom about her birthday party] │
-│                                            │
-│ Due:    [Tomorrow    ] [3:00 PM  ]         │
-│ Defer:  [None        ]                     │
-│ Project:[Inbox       ▼]                    │
-│ Tags:   [@calls ×] [family ×] [+]         │
-│                                            │
-│ ⚠️ Uncertain: Is this the right time?      │
-│                                            │
-│ [Create Task]              [Cancel]        │
-└────────────────────────────────────────────┘
-```
+When you need to verify or adjust extracted information, a form view allows editing:
+- Title and note
+- Due date and defer date
+- Project assignment
+- Tag assignment
+- Uncertainty warnings when extraction confidence is low
 
-### Batch Confirm (Multiple Tasks)
+### Batch Confirm
 
-When multiple tasks detected:
-```
-┌────────────────────────────────────────────┐
-│ Create 3 tasks?                            │
-│                                            │
-│ ☑ Buy groceries (@errands)                 │
-│ ☑ Call the dentist (@calls)                │
-│ ☑ Finish the report (due: Friday)          │
-│                                            │
-│ [Create All]  [Create Selected]  [Cancel]  │
-└────────────────────────────────────────────┘
-```
+When multiple tasks are detected in a single input, the user can select which tasks to create, edit them individually, or create all at once.
 
 ## Smart Duplicate Detection
 

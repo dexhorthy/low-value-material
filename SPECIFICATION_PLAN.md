@@ -59,6 +59,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Attachments | ✅ Done | `specs/attachments.md` |
 | Rich Text Notes | ✅ Done | `specs/notes.md` |
 | Automation | ✅ Done | `specs/automation.md` |
+| Project Templates | ✅ Done | `specs/templates.md` |
 
 ### Priority 7: Advanced Features
 | Spec | Status | File |
@@ -497,4 +498,28 @@ OmniFocus is a task management application built around the Getting Things Done 
 - ALL AI-ENHANCED SPECIFICATIONS COMPLETE (14 specifications in improved_specs/)
 - ENTIRE PROJECT COMPLETE: 39 total specifications across 9 priority tiers
   - 25 core specifications in specs/
+  - 14 AI-enhanced specifications in improved_specs/
+
+### 2026-01-03 - Iteration 28
+- Identified Project Templates as missing high-priority specification
+- Researched OmniFocus template features via web search and documentation
+- Researched TaskPaper format, placeholder syntax, and template instantiation workflow
+- Researched third-party plugins (Templates for OmniFocus by Kaitlin Salzke)
+- Created templates.md specification covering:
+  - Template storage: native folders, external TaskPaper files, plugin-based
+  - TaskPaper plain text format with tag attributes
+  - Placeholder system with guillemet syntax: «placeholder_name»
+  - Placeholder types: basic prompts, default values, fixed values in notes
+  - Date placeholders with relative calculation ($DUE=«date» + 7d)
+  - Template instantiation: manual duplication vs automated via plugins/shortcuts
+  - Optional sections marked with $OPTIONAL for user selection
+  - Advanced features: folder assignment, nested placeholders, date propagation
+  - Common patterns: event planning, client onboarding, releases, weekly review
+  - Integration with URL schemes, Shortcuts, Omni Automation, third-party plugins
+  - Platform considerations and limitations
+  - Best practices for creators and users
+- Refined PROMPT.md and ai-capture.md (removed ASCII art, clearer prose)
+- Updated SPECIFICATION_PLAN.md with templates.md in Priority 6
+- COMPLETE: 40 total specifications across 9 priority tiers
+  - 26 core specifications in specs/
   - 14 AI-enhanced specifications in improved_specs/
