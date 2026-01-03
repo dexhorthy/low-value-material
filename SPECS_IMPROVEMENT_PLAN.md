@@ -48,15 +48,17 @@ AI enhancements:
 - [x] Deadline risk assessment and warnings
 
 ### Priority 3: Smart Project & Task Organization (MEDIUM)
-**Status**: Not Started
+**Status**: COMPLETED
 **Base Specs**: project.md, folder.md, tag.md
 
+See `improved_specs/ai-organization.md` for full specification.
+
 AI enhancements:
-- [ ] Auto-project creation from task clusters
-- [ ] Tag suggestions based on content analysis
-- [ ] Project template recommendations
-- [ ] Automatic task breakdown suggestions
-- [ ] Related task discovery
+- [x] Auto-project creation from task clusters
+- [x] Tag suggestions based on content analysis
+- [x] Project template recommendations
+- [x] Automatic task breakdown suggestions
+- [x] Related task discovery
 
 ### Priority 4: AI-Assisted Review Process (MEDIUM)
 **Status**: Not Started
@@ -108,6 +110,7 @@ AI enhancements:
 | 2026-01-03 | Priority 0: BAML/Agent SDK Research | COMPLETED | Created `ai-processing-reference.md` with BAML schemas and Claude Agent SDK patterns |
 | 2026-01-03 | Priority 1: AI-Powered Capture | COMPLETED | Created `ai-capture.md` with NLP parsing, voice input, duplicate detection, global launcher |
 | 2026-01-03 | Priority 2: Intelligent Task Suggestions | COMPLETED | Created `ai-suggestions.md` with scoring engine, context awareness, deadline risk, morning briefing |
+| 2026-01-03 | Priority 3: Smart Organization | COMPLETED | Created `ai-organization.md` with auto-tagging, task breakdown, project clustering, templates, related tasks |
 
 ## Implementation Notes
 
