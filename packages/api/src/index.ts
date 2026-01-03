@@ -11,6 +11,12 @@ import {
   isDeferred,
   isOverdue,
   isDueSoon,
+  isBlockedBySequential,
+  computeTaskAvailability,
+  getFirstAvailable,
+  isProjectBlocking,
+  type TaskForSequentialCheck,
+  type ProjectForAvailabilityCheck,
 } from "@lvm/core";
 import { eq, and, lt, gt, isNull, desc, asc } from "drizzle-orm";
 import { folderRouter } from "./folder";
@@ -387,7 +393,7 @@ export const dueSoonTasksEffective = os
       });
   });
 
-// Get available tasks using EFFECTIVE defer dates (inheritance-aware)
+// Get available tasks using EFFECTIVE defer dates and sequential blocking (inheritance-aware)
 export const availableTasksEffective = os
   .input(z.object({}).optional())
   .handler(async () => {
@@ -398,14 +404,59 @@ export const availableTasksEffective = os
       .where(eq(tasks.status, "active"))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
 
-    const tasksWithDates = await Promise.all(
+    // Group tasks by project for sequential blocking check
+    const projectIds = [...new Set(allTasks.filter(t => t.projectId).map(t => t.projectId!))];
+    const projectsData = projectIds.length > 0
+      ? await db.query.projects.findMany({
+          where: (p, { inArray }) => inArray(p.id, projectIds),
+        })
+      : [];
+    const projectMap = new Map(projectsData.map(p => [p.id, p]));
+
+    // Compute effective dates and availability for each task
+    const tasksWithAvailability = await Promise.all(
       allTasks.map(async (task) => {
         const effectiveDates = await computeEffectiveDates(task.id);
-        return { ...task, ...effectiveDates };
+        const project = task.projectId ? projectMap.get(task.projectId) : null;
+
+        // Get sibling tasks in same project for sequential check
+        const siblingTasks: TaskForSequentialCheck[] = task.projectId
+          ? allTasks.filter(t => t.projectId === task.projectId).map(t => ({
+              id: t.id,
+              status: t.status,
+              order: t.order,
+              projectId: t.projectId,
+            }))
+          : [];
+
+        const projectForCheck: ProjectForAvailabilityCheck | null = project
+          ? { id: project.id, type: project.type, status: project.status, deferDate: project.deferDate }
+          : null;
+
+        const taskForCheck: TaskForSequentialCheck = {
+          id: task.id,
+          status: task.status,
+          order: task.order,
+          projectId: task.projectId,
+        };
+
+        const availability = computeTaskAvailability(
+          taskForCheck,
+          effectiveDates.effectiveDeferDate,
+          projectForCheck,
+          siblingTasks,
+          now
+        );
+
+        return {
+          ...task,
+          ...effectiveDates,
+          ...availability,
+        };
       })
     );
 
-    return tasksWithDates.filter((task) => isAvailable(task.effectiveDeferDate, now));
+    return tasksWithAvailability.filter((task) => task.isAvailable);
   });
 
 // Get deferred tasks using EFFECTIVE defer dates (inheritance-aware)
@@ -433,6 +484,213 @@ export const deferredTasksEffective = os
       });
   });
 
+// Get "next actions" - first available task from each project plus all inbox/standalone tasks
+// Per specs/availability.md: Next actions are available tasks that are the first available in their project
+export const nextActions = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.status, "active"))
+      .orderBy(asc(tasks.order), desc(tasks.createdAt));
+
+    // Get all projects
+    const projectIds = [...new Set(allTasks.filter(t => t.projectId).map(t => t.projectId!))];
+    const projectsData = projectIds.length > 0
+      ? await db.query.projects.findMany({
+          where: (p, { inArray }) => inArray(p.id, projectIds),
+        })
+      : [];
+    const projectMap = new Map(projectsData.map(p => [p.id, p]));
+
+    // Compute availability for all tasks
+    const tasksWithAvailability = await Promise.all(
+      allTasks.map(async (task) => {
+        const effectiveDates = await computeEffectiveDates(task.id);
+        const project = task.projectId ? projectMap.get(task.projectId) : null;
+
+        const siblingTasks: TaskForSequentialCheck[] = task.projectId
+          ? allTasks.filter(t => t.projectId === task.projectId).map(t => ({
+              id: t.id,
+              status: t.status,
+              order: t.order,
+              projectId: t.projectId,
+            }))
+          : [];
+
+        const projectForCheck: ProjectForAvailabilityCheck | null = project
+          ? { id: project.id, type: project.type, status: project.status, deferDate: project.deferDate }
+          : null;
+
+        const taskForCheck: TaskForSequentialCheck = {
+          id: task.id,
+          status: task.status,
+          order: task.order,
+          projectId: task.projectId,
+        };
+
+        const availability = computeTaskAvailability(
+          taskForCheck,
+          effectiveDates.effectiveDeferDate,
+          projectForCheck,
+          siblingTasks,
+          now
+        );
+
+        return {
+          ...task,
+          ...effectiveDates,
+          ...availability,
+        };
+      })
+    );
+
+    // Filter to available tasks
+    const availableTasks = tasksWithAvailability.filter(t => t.isAvailable);
+
+    // For tasks with projects, keep only the first available in each project
+    const projectFirstAvailable = new Set<string>();
+    const nextActionTasks = availableTasks.filter(task => {
+      // Inbox/standalone tasks are always next actions
+      if (!task.projectId) return true;
+
+      // For project tasks, only the first available (by order) is a next action
+      if (projectFirstAvailable.has(task.projectId)) return false;
+
+      // This is the first available task in this project
+      projectFirstAvailable.add(task.projectId);
+      return true;
+    });
+
+    return nextActionTasks;
+  });
+
+// Get the first available task in a specific project
+export const firstAvailableInProject = os
+  .input(z.object({ projectId: z.string().uuid() }))
+  .handler(async ({ input }) => {
+    const now = new Date();
+
+    // Get the project
+    const project = await db.query.projects.findFirst({
+      where: eq(projects.id, input.projectId),
+    });
+    if (!project) return null;
+
+    // Get all active tasks in the project
+    const projectTasks = await db
+      .select()
+      .from(tasks)
+      .where(and(eq(tasks.projectId, input.projectId), eq(tasks.status, "active")))
+      .orderBy(asc(tasks.order));
+
+    if (projectTasks.length === 0) return null;
+
+    // Compute availability for each task
+    const siblingTasks: TaskForSequentialCheck[] = projectTasks.map(t => ({
+      id: t.id,
+      status: t.status,
+      order: t.order,
+      projectId: t.projectId,
+    }));
+
+    const projectForCheck: ProjectForAvailabilityCheck = {
+      id: project.id,
+      type: project.type,
+      status: project.status,
+      deferDate: project.deferDate,
+    };
+
+    for (const task of projectTasks) {
+      const effectiveDates = await computeEffectiveDates(task.id);
+      const taskForCheck: TaskForSequentialCheck = {
+        id: task.id,
+        status: task.status,
+        order: task.order,
+        projectId: task.projectId,
+      };
+
+      const availability = computeTaskAvailability(
+        taskForCheck,
+        effectiveDates.effectiveDeferDate,
+        projectForCheck,
+        siblingTasks,
+        now
+      );
+
+      if (availability.isAvailable) {
+        return { ...task, ...effectiveDates, ...availability };
+      }
+    }
+
+    return null;
+  });
+
+// Get blocked tasks with their blocking reasons
+export const blockedTasks = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.status, "active"))
+      .orderBy(asc(tasks.order), desc(tasks.createdAt));
+
+    const projectIds = [...new Set(allTasks.filter(t => t.projectId).map(t => t.projectId!))];
+    const projectsData = projectIds.length > 0
+      ? await db.query.projects.findMany({
+          where: (p, { inArray }) => inArray(p.id, projectIds),
+        })
+      : [];
+    const projectMap = new Map(projectsData.map(p => [p.id, p]));
+
+    const tasksWithAvailability = await Promise.all(
+      allTasks.map(async (task) => {
+        const effectiveDates = await computeEffectiveDates(task.id);
+        const project = task.projectId ? projectMap.get(task.projectId) : null;
+
+        const siblingTasks: TaskForSequentialCheck[] = task.projectId
+          ? allTasks.filter(t => t.projectId === task.projectId).map(t => ({
+              id: t.id,
+              status: t.status,
+              order: t.order,
+              projectId: t.projectId,
+            }))
+          : [];
+
+        const projectForCheck: ProjectForAvailabilityCheck | null = project
+          ? { id: project.id, type: project.type, status: project.status, deferDate: project.deferDate }
+          : null;
+
+        const taskForCheck: TaskForSequentialCheck = {
+          id: task.id,
+          status: task.status,
+          order: task.order,
+          projectId: task.projectId,
+        };
+
+        const availability = computeTaskAvailability(
+          taskForCheck,
+          effectiveDates.effectiveDeferDate,
+          projectForCheck,
+          siblingTasks,
+          now
+        );
+
+        return {
+          ...task,
+          ...effectiveDates,
+          ...availability,
+        };
+      })
+    );
+
+    return tasksWithAvailability.filter((task) => !task.isAvailable);
+  });
+
 // Router - plain object with procedures
 export const router = {
   task: {
@@ -451,11 +709,15 @@ export const router = {
     dueSoon: dueSoonTasks,
     available: availableTasks,
     deferred: deferredTasks,
-    // Effective queries (inheritance-aware)
+    // Effective queries (inheritance-aware, includes sequential blocking)
     overdueEffective: overdueTasksEffective,
     dueSoonEffective: dueSoonTasksEffective,
     availableEffective: availableTasksEffective,
     deferredEffective: deferredTasksEffective,
+    // Availability queries (specs/availability.md)
+    nextActions: nextActions,
+    firstAvailableInProject: firstAvailableInProject,
+    blocked: blockedTasks,
   },
   folder: folderRouter,
   project: projectRouter,

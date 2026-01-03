@@ -367,3 +367,160 @@ export const TaskWithEffectiveDatesSchema = TaskSchema.extend({
   hasLocalDeferDate: z.boolean(),
 });
 export type TaskWithEffectiveDates = z.infer<typeof TaskWithEffectiveDatesSchema>;
+
+// ============================================================================
+// Availability - specs/availability.md
+// ============================================================================
+
+/**
+ * Blocking reason for why a task is not available.
+ */
+export const BlockingReason = z.enum([
+  "deferred",           // Future defer date
+  "sequential",         // Preceding task incomplete in sequential project
+  "project_on_hold",    // Project is on hold
+  "project_deferred",   // Project has future defer date
+  "parent_blocked",     // Parent task is blocked
+]);
+export type BlockingReason = z.infer<typeof BlockingReason>;
+
+/**
+ * Minimal task info needed for sequential blocking check.
+ */
+export interface TaskForSequentialCheck {
+  id: string;
+  status: TaskStatus;
+  order: number;
+  projectId: string | null;
+}
+
+/**
+ * Minimal project info needed for availability check.
+ */
+export interface ProjectForAvailabilityCheck {
+  id: string;
+  type: ProjectType;
+  status: ProjectStatus;
+  deferDate: Date | null;
+}
+
+/**
+ * Checks if a task is blocked by sequential project ordering.
+ * Per specs/availability.md: In sequential projects, only the first incomplete task is available.
+ *
+ * @param task - The task to check
+ * @param projectType - The type of project (parallel, sequential, single_actions)
+ * @param siblingTasks - Other tasks in the same project (must include the task being checked)
+ * @returns true if the task is blocked by sequential ordering
+ */
+export function isBlockedBySequential(
+  task: TaskForSequentialCheck,
+  projectType: ProjectType | null,
+  siblingTasks: TaskForSequentialCheck[]
+): boolean {
+  // Not blocked if no project
+  if (!task.projectId || !projectType) return false;
+
+  // Only sequential projects have blocking
+  if (projectType !== "sequential") return false;
+
+  // Find the first incomplete task by order in this project
+  const incompleteSiblings = siblingTasks
+    .filter(t => t.projectId === task.projectId && t.status === "active")
+    .sort((a, b) => a.order - b.order);
+
+  if (incompleteSiblings.length === 0) return false;
+
+  const firstIncomplete = incompleteSiblings[0];
+
+  // Task is blocked if it's not the first incomplete task
+  return task.id !== firstIncomplete.id;
+}
+
+/**
+ * Gets the first available task in a project (the "next action").
+ * Per specs/availability.md:
+ * - Parallel projects: first incomplete task by order
+ * - Sequential projects: first incomplete task by order (same as parallel for this)
+ * - Single actions: first incomplete task by order (all are "next" but we return first)
+ *
+ * @param projectType - The type of project
+ * @param tasks - Tasks in the project
+ * @returns The first available task, or null if none available
+ */
+export function getFirstAvailable(
+  projectType: ProjectType,
+  tasks: TaskForSequentialCheck[]
+): TaskForSequentialCheck | null {
+  const incompleteTasks = tasks
+    .filter(t => t.status === "active")
+    .sort((a, b) => a.order - b.order);
+
+  return incompleteTasks[0] ?? null;
+}
+
+/**
+ * Checks if project status blocks tasks from being available.
+ * Per specs/availability.md: Tasks in on_hold, completed, or dropped projects are not available.
+ */
+export function isProjectBlocking(projectStatus: ProjectStatus | null): boolean {
+  if (projectStatus === null) return false;
+  return projectStatus !== "active";
+}
+
+/**
+ * Full availability status for a task.
+ */
+export interface TaskAvailabilityStatus {
+  isAvailable: boolean;
+  blockingReasons: BlockingReason[];
+}
+
+/**
+ * Computes full availability status for a task considering all blocking factors.
+ * Per specs/availability.md, a task is available when ALL of the following are true:
+ * 1. Task status is active
+ * 2. Effective defer date has passed
+ * 3. Not blocked by sequential project
+ * 4. Project is available (active and not deferred)
+ *
+ * @param task - The task to check
+ * @param effectiveDeferDate - The computed effective defer date
+ * @param project - The project the task belongs to (null if no project)
+ * @param siblingTasks - Other tasks in the same project
+ * @param now - Current time for defer date comparison
+ */
+export function computeTaskAvailability(
+  task: TaskForSequentialCheck & { status: TaskStatus },
+  effectiveDeferDate: Date | null,
+  project: ProjectForAvailabilityCheck | null,
+  siblingTasks: TaskForSequentialCheck[],
+  now: Date = new Date()
+): TaskAvailabilityStatus {
+  const blockingReasons: BlockingReason[] = [];
+
+  // Check defer date
+  if (isDeferred(effectiveDeferDate, now)) {
+    blockingReasons.push("deferred");
+  }
+
+  // Check project status
+  if (project && isProjectBlocking(project.status)) {
+    blockingReasons.push("project_on_hold");
+  }
+
+  // Check project defer date
+  if (project?.deferDate && project.deferDate > now) {
+    blockingReasons.push("project_deferred");
+  }
+
+  // Check sequential blocking
+  if (isBlockedBySequential(task, project?.type ?? null, siblingTasks)) {
+    blockingReasons.push("sequential");
+  }
+
+  return {
+    isAvailable: task.status === "active" && blockingReasons.length === 0,
+    blockingReasons,
+  };
+}

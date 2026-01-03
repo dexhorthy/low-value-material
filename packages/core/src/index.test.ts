@@ -10,6 +10,12 @@ import {
   isDeferred,
   isOverdue,
   isDueSoon,
+  isBlockedBySequential,
+  getFirstAvailable,
+  isProjectBlocking,
+  computeTaskAvailability,
+  type TaskForSequentialCheck,
+  type ProjectForAvailabilityCheck,
 } from "./index";
 
 describe("TaskStatus", () => {
@@ -469,5 +475,303 @@ describe("isDueSoon", () => {
     // With 72h threshold, 60h away should be due soon
     const within72h = new Date("2026-01-18T00:00:00Z"); // 60 hours
     expect(isDueSoon(within72h, now, 72)).toBe(true);
+  });
+});
+
+// ============================================================================
+// Availability Tests - specs/availability.md
+// ============================================================================
+
+describe("isBlockedBySequential", () => {
+  const projectId = "proj-1";
+
+  // Helper to create test tasks
+  const createTask = (id: string, order: number, status: TaskStatus = "active"): TaskForSequentialCheck => ({
+    id,
+    status,
+    order,
+    projectId,
+  });
+
+  test("returns false when task has no project", () => {
+    const task: TaskForSequentialCheck = { id: "task-1", status: "active", order: 0, projectId: null };
+    expect(isBlockedBySequential(task, "sequential", [])).toBe(false);
+  });
+
+  test("returns false for parallel projects", () => {
+    const task = createTask("task-2", 1);
+    const tasks = [createTask("task-1", 0), task, createTask("task-3", 2)];
+    expect(isBlockedBySequential(task, "parallel", tasks)).toBe(false);
+  });
+
+  test("returns false for single_actions projects", () => {
+    const task = createTask("task-2", 1);
+    const tasks = [createTask("task-1", 0), task, createTask("task-3", 2)];
+    expect(isBlockedBySequential(task, "single_actions", tasks)).toBe(false);
+  });
+
+  test("returns false for first task in sequential project", () => {
+    const task = createTask("task-1", 0);
+    const tasks = [task, createTask("task-2", 1), createTask("task-3", 2)];
+    expect(isBlockedBySequential(task, "sequential", tasks)).toBe(false);
+  });
+
+  test("returns true for second task in sequential project", () => {
+    const task = createTask("task-2", 1);
+    const tasks = [createTask("task-1", 0), task, createTask("task-3", 2)];
+    expect(isBlockedBySequential(task, "sequential", tasks)).toBe(true);
+  });
+
+  test("returns true for third task in sequential project", () => {
+    const task = createTask("task-3", 2);
+    const tasks = [createTask("task-1", 0), createTask("task-2", 1), task];
+    expect(isBlockedBySequential(task, "sequential", tasks)).toBe(true);
+  });
+
+  test("first incomplete becomes available when previous completes", () => {
+    // task-1 is completed, task-2 should now be first incomplete
+    const task2 = createTask("task-2", 1);
+    const tasks = [
+      createTask("task-1", 0, "completed"),
+      task2,
+      createTask("task-3", 2),
+    ];
+    expect(isBlockedBySequential(task2, "sequential", tasks)).toBe(false);
+  });
+
+  test("handles out-of-order task insertion", () => {
+    // Tasks not in order by id, but by order field
+    const task = createTask("task-a", 5);
+    const tasks = [
+      createTask("task-c", 0),  // first
+      createTask("task-b", 2),  // second
+      task,                      // third
+    ];
+    expect(isBlockedBySequential(task, "sequential", tasks)).toBe(true);
+  });
+
+  test("ignores completed tasks in blocking calculation", () => {
+    const task = createTask("task-3", 2);
+    const tasks = [
+      createTask("task-1", 0, "completed"),
+      createTask("task-2", 1, "completed"),
+      task,  // First incomplete
+    ];
+    expect(isBlockedBySequential(task, "sequential", tasks)).toBe(false);
+  });
+
+  test("ignores dropped tasks in blocking calculation", () => {
+    const task = createTask("task-2", 1);
+    const tasks = [
+      createTask("task-1", 0, "dropped"),
+      task,  // First incomplete (active)
+      createTask("task-3", 2),
+    ];
+    expect(isBlockedBySequential(task, "sequential", tasks)).toBe(false);
+  });
+});
+
+describe("getFirstAvailable", () => {
+  const projectId = "proj-1";
+
+  const createTask = (id: string, order: number, status: TaskStatus = "active"): TaskForSequentialCheck => ({
+    id,
+    status,
+    order,
+    projectId,
+  });
+
+  test("returns first active task by order", () => {
+    const tasks = [
+      createTask("task-1", 0),
+      createTask("task-2", 1),
+      createTask("task-3", 2),
+    ];
+    const result = getFirstAvailable("parallel", tasks);
+    expect(result?.id).toBe("task-1");
+  });
+
+  test("returns null when all tasks completed", () => {
+    const tasks = [
+      createTask("task-1", 0, "completed"),
+      createTask("task-2", 1, "completed"),
+    ];
+    const result = getFirstAvailable("parallel", tasks);
+    expect(result).toBe(null);
+  });
+
+  test("skips completed tasks to find first active", () => {
+    const tasks = [
+      createTask("task-1", 0, "completed"),
+      createTask("task-2", 1),
+      createTask("task-3", 2),
+    ];
+    const result = getFirstAvailable("parallel", tasks);
+    expect(result?.id).toBe("task-2");
+  });
+
+  test("returns first by order even if inserted last", () => {
+    const tasks = [
+      createTask("task-c", 10),
+      createTask("task-a", 0),
+      createTask("task-b", 5),
+    ];
+    const result = getFirstAvailable("sequential", tasks);
+    expect(result?.id).toBe("task-a");
+  });
+
+  test("returns null for empty task list", () => {
+    const result = getFirstAvailable("parallel", []);
+    expect(result).toBe(null);
+  });
+});
+
+describe("isProjectBlocking", () => {
+  test("returns false for null (no project)", () => {
+    expect(isProjectBlocking(null)).toBe(false);
+  });
+
+  test("returns false for active project", () => {
+    expect(isProjectBlocking("active")).toBe(false);
+  });
+
+  test("returns true for on_hold project", () => {
+    expect(isProjectBlocking("on_hold")).toBe(true);
+  });
+
+  test("returns true for completed project", () => {
+    expect(isProjectBlocking("completed")).toBe(true);
+  });
+
+  test("returns true for dropped project", () => {
+    expect(isProjectBlocking("dropped")).toBe(true);
+  });
+});
+
+describe("computeTaskAvailability", () => {
+  const now = new Date("2026-01-15T12:00:00Z");
+  const future = new Date("2026-01-20");
+  const past = new Date("2026-01-10");
+  const projectId = "proj-1";
+
+  const createTask = (id: string, order: number, status: TaskStatus = "active"): TaskForSequentialCheck => ({
+    id,
+    status,
+    order,
+    projectId,
+  });
+
+  const createProject = (
+    type: ProjectType = "parallel",
+    status: ProjectStatus = "active",
+    deferDate: Date | null = null
+  ): ProjectForAvailabilityCheck => ({
+    id: projectId,
+    type,
+    status,
+    deferDate,
+  });
+
+  test("task is available with no blockers", () => {
+    const task = createTask("task-1", 0);
+    const project = createProject();
+    const result = computeTaskAvailability(task, null, project, [task], now);
+
+    expect(result.isAvailable).toBe(true);
+    expect(result.blockingReasons).toEqual([]);
+  });
+
+  test("task is available without project", () => {
+    const task: TaskForSequentialCheck = { id: "task-1", status: "active", order: 0, projectId: null };
+    const result = computeTaskAvailability(task, null, null, [], now);
+
+    expect(result.isAvailable).toBe(true);
+    expect(result.blockingReasons).toEqual([]);
+  });
+
+  test("task is blocked by defer date", () => {
+    const task = createTask("task-1", 0);
+    const project = createProject();
+    const result = computeTaskAvailability(task, future, project, [task], now);
+
+    expect(result.isAvailable).toBe(false);
+    expect(result.blockingReasons).toContain("deferred");
+  });
+
+  test("task is blocked by project on_hold", () => {
+    const task = createTask("task-1", 0);
+    const project = createProject("parallel", "on_hold");
+    const result = computeTaskAvailability(task, null, project, [task], now);
+
+    expect(result.isAvailable).toBe(false);
+    expect(result.blockingReasons).toContain("project_on_hold");
+  });
+
+  test("task is blocked by project defer date", () => {
+    const task = createTask("task-1", 0);
+    const project = createProject("parallel", "active", future);
+    const result = computeTaskAvailability(task, null, project, [task], now);
+
+    expect(result.isAvailable).toBe(false);
+    expect(result.blockingReasons).toContain("project_deferred");
+  });
+
+  test("task is blocked by sequential ordering", () => {
+    const task = createTask("task-2", 1);
+    const tasks = [createTask("task-1", 0), task];
+    const project = createProject("sequential");
+    const result = computeTaskAvailability(task, null, project, tasks, now);
+
+    expect(result.isAvailable).toBe(false);
+    expect(result.blockingReasons).toContain("sequential");
+  });
+
+  test("first task in sequential project is available", () => {
+    const task = createTask("task-1", 0);
+    const tasks = [task, createTask("task-2", 1)];
+    const project = createProject("sequential");
+    const result = computeTaskAvailability(task, null, project, tasks, now);
+
+    expect(result.isAvailable).toBe(true);
+    expect(result.blockingReasons).toEqual([]);
+  });
+
+  test("task can have multiple blocking reasons", () => {
+    const task = createTask("task-2", 1);
+    const tasks = [createTask("task-1", 0), task];
+    const project = createProject("sequential", "on_hold", future);
+    const result = computeTaskAvailability(task, future, project, tasks, now);
+
+    expect(result.isAvailable).toBe(false);
+    expect(result.blockingReasons).toContain("deferred");
+    expect(result.blockingReasons).toContain("project_on_hold");
+    expect(result.blockingReasons).toContain("project_deferred");
+    expect(result.blockingReasons).toContain("sequential");
+  });
+
+  test("completed task is not available", () => {
+    const task: TaskForSequentialCheck & { status: TaskStatus } = {
+      id: "task-1",
+      status: "completed",
+      order: 0,
+      projectId,
+    };
+    const project = createProject();
+    const result = computeTaskAvailability(task, null, project, [task], now);
+
+    expect(result.isAvailable).toBe(false);
+  });
+
+  test("dropped task is not available", () => {
+    const task: TaskForSequentialCheck & { status: TaskStatus } = {
+      id: "task-1",
+      status: "dropped",
+      order: 0,
+      projectId,
+    };
+    const project = createProject();
+    const result = computeTaskAvailability(task, null, project, [task], now);
+
+    expect(result.isAvailable).toBe(false);
   });
 });

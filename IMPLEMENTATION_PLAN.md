@@ -68,7 +68,7 @@ Complete the data model from specs:
 | Due dates | ✅ Done | specs/due-dates.md - time-specified field, overdue/dueSoon queries, effective date inheritance |
 | Defer dates | ✅ Done | specs/defer-dates.md - time-specified field, available/deferred queries, effective date inheritance |
 | Repeat patterns | ⏳ Pending | specs/repeat.md |
-| Availability calculation | ⏳ Pending | specs/availability.md |
+| Availability calculation | ✅ Done | specs/availability.md - sequential project blocking, project status blocking, nextActions/blocked queries |
 
 ### Phase 4: Views & Perspectives
 **Status**: Not Started
@@ -142,6 +142,7 @@ Complete the data model from specs:
 | 2026-01-03 | Phase 3 | Added dueTimeSpecified and deferTimeSpecified fields to task/project schemas |
 | 2026-01-03 | Phase 3 | Added overdue, dueSoon, available, deferred task query endpoints (21 tests passing) |
 | 2026-01-03 | Phase 3 | Added effective due/defer date inheritance with hierarchy traversal (60 tests passing) |
+| 2026-01-03 | Phase 3 | Added availability calculation with sequential project blocking (90 tests passing) |
 
 ## Commands
 
@@ -181,6 +182,7 @@ docker compose down  # Stop services
 12. ~~Integrate AI capture with API layer (Phase 5)~~ ✅
 13. ~~Add due/defer time-specified flags and state queries (Phase 3)~~ ✅
 14. ~~Complete effective due/defer date inheritance (Phase 3)~~ ✅
-15. Implement repeat patterns (Phase 3)
-16. Add Electric SQL sync layer (Phase 6)
-17. Implement AI task suggestions (Phase 5)
+15. ~~Implement availability calculation with sequential blocking (Phase 3)~~ ✅
+16. Implement repeat patterns (Phase 3)
+17. Add Electric SQL sync layer (Phase 6)
+18. Implement AI task suggestions (Phase 5)
