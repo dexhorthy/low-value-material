@@ -25,7 +25,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 ### Priority 2: Date/Time System
 | Spec | Status | File |
 |------|--------|------|
-| Due Dates | Not Started | `specs/due-dates.md` |
+| Due Dates | ✅ Done | `specs/due-dates.md` |
 | Defer Dates | Not Started | `specs/defer-dates.md` |
 | Repeat Patterns | Not Started | `specs/repeat.md` |
 | Availability | Not Started | `specs/availability.md` |
@@ -106,3 +106,16 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Availability rules for inbox items (no sequential blocking)
   - Two-minute rule integration for GTD practitioners
 - Priority 1: Core Data Model is now COMPLETE
+
+### 2026-01-03 - Iteration 6
+- Researched OmniFocus due dates, effective due dates, and date inheritance
+- Researched OmniFocus 4.7 Planned Dates feature (August 2025)
+- Created due-dates.md specification covering:
+  - Due date data model with all-day vs specific time support
+  - Due states: normal, due soon (amber), overdue (red)
+  - Configurable due soon threshold (default 48 hours)
+  - Configurable default due time (default 5 PM)
+  - Effective due date calculation with inheritance from parent/project
+  - Queries for due on date, overdue, due soon, due in range
+  - Forecast integration and notifications
+  - Best practices: use sparingly for hard deadlines only
