@@ -1,0 +1,25 @@
+{
+  "name": "low-value-material",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check": "turbo run check",
+    "test": "turbo run test",
+    "format": "oxlint --fix . && oxformat .",
+    "lint": "oxlint .",
+    "db:generate": "turbo run db:generate --filter=@lvm/db",
+    "db:migrate": "turbo run db:migrate --filter=@lvm/db",
+    "db:push": "turbo run db:push --filter=@lvm/db",
+    "db:studio": "turbo run db:studio --filter=@lvm/db"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.2",
+    "oxlint": "^0.16.0",
+    "turbo": "^2.4.2",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "bun@1.2.2"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@lvm/cli",
+  "version": "0.0.1",
+  "type": "module",
+  "bin": {
+    "lvm": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "check": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.7",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@lvm/api": "workspace:*",
+    "@lvm/core": "workspace:*",
+    "@lvm/db": "workspace:*",
+    "drizzle-orm": "^0.39.3",
+    "ink": "^5.1.0",
+    "react": "^19.0.0"
+  }
+}

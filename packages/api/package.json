@@ -1,0 +1,26 @@
+{
+  "name": "@lvm/api",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@lvm/core": "workspace:*",
+    "@lvm/db": "workspace:*",
+    "@orpc/server": "^1.4.3",
+    "@orpc/client": "^1.4.3",
+    "drizzle-orm": "^0.39.3",
+    "zod": "^3.24.1"
+  }
+}
