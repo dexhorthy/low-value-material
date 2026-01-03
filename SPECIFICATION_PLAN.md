@@ -35,7 +35,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 |------|--------|------|
 | Perspectives Core | ✅ Done | `specs/perspectives.md` |
 | Forecast View | ✅ Done | `specs/forecast.md` |
-| Review System | Not Started | `specs/review.md` |
+| Review System | ✅ Done | `specs/review.md` |
 | Custom Perspectives | Not Started | `specs/custom-perspectives.md` |
 
 ### Priority 4: Organization Features
@@ -192,3 +192,17 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Drag-and-drop date modification with modifier keys
   - Past (overdue) and Future sections
   - Quick reschedule operations
+
+### 2026-01-03 - Iteration 12
+- Researched OmniFocus Review perspective and GTD weekly review
+- Researched review intervals, stalled projects, and mark reviewed workflow
+- Created review.md specification covering:
+  - Project review fields: review_interval, last_reviewed_at, next_review_at
+  - Default review interval (7 days) with per-project override
+  - Review perspective sorted by next review date
+  - Stalled project detection (active with zero remaining tasks)
+  - Mark reviewed operation and workflow
+  - Visual indicators: maroon dot, stalled badge
+  - Review queries: needs_review, stalled, review_schedule
+  - Settings: default interval, include on-hold, show stalled
+  - Weekly review workflow and best practices
