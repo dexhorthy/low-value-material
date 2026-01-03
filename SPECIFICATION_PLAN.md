@@ -51,7 +51,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 |------|--------|------|
 | Sync | ✅ Done | `specs/sync.md` |
 | Notifications | ✅ Done | `specs/notifications.md` |
-| Location-Based Tags | Not Started | `specs/location-tags.md` |
+| Location-Based Tags | ✅ Done | `specs/location-tags.md` |
 
 ## Research Sources
 - [OmniFocus Features](https://www.omnigroup.com/omnifocus/features)
@@ -310,3 +310,18 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Calendar alarms integration (14-day lookahead)
   - Notification lifecycle for date changes and repeating items
   - Platform differences matrix (macOS, iOS, Watch, Web)
+
+### 2026-01-03 - Iteration 20
+- Researched OmniFocus location-based tags and Nearby perspective
+- Researched geofence notifications, radius settings, and region monitoring
+- Created location-tags.md specification covering:
+  - Location object data model with coordinates, source, radius, notification trigger
+  - Location source types: here, address, business_search, contact, pin
+  - Radius options: small (~200m), medium (~500m), large (~10km)
+  - Notification triggers: arriving, leaving, none
+  - Nearby perspective with map and list view modes
+  - Geofence notification mechanics and technical limitations
+  - Platform considerations (mobile vs desktop vs web)
+  - Best practices for location tag organization
+- Priority 5: Platform Features is now COMPLETE
+- ALL SPECIFICATIONS COMPLETE
