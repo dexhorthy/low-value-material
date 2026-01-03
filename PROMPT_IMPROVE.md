@@ -23,3 +23,7 @@ Essentials to include:
 - no archive mechanism, use a real modern database that doesn't require regular archiving
 - data stored behind an API and can be synced anywhere
 - ability to handle a row with connected mcps/tools
+
+<guidance>
+- your specs in improved_specs/ must stand alone and capture all content from specs/
+</guidance>

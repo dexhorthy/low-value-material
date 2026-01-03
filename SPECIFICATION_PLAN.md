@@ -49,7 +49,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 ### Priority 5: Platform Features
 | Spec | Status | File |
 |------|--------|------|
-| Sync | Not Started | `specs/sync.md` |
+| Sync | ✅ Done | `specs/sync.md` |
 | Notifications | Not Started | `specs/notifications.md` |
 | Location-Based Tags | Not Started | `specs/location-tags.md` |
 
@@ -275,3 +275,18 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Keyboard shortcuts and edit mode (mobile)
   - Constraints: selection limits, type mixing, view restrictions
 - Priority 4: Organization Features is now COMPLETE
+
+### 2026-01-03 - Iteration 18
+- Researched OmniFocus sync architecture and Omni Sync Server
+- Researched push-triggered sync, WebDAV protocol, and encryption
+- Created sync.md specification covering:
+  - Change-based sync with transaction log model
+  - Sync triggers: automatic, manual, push-triggered
+  - Server options: Omni Sync Server vs WebDAV (not Dropbox/iCloud)
+  - Encryption: in transit (HTTPS) and at rest (client-side)
+  - Device registration and push notification architecture
+  - Compaction process and stale device handling (21-day limit)
+  - Conflict resolution: last-write-wins, repeating task duplicates
+  - Sync states and offline support with queue
+  - Mail Drop: email-to-inbox feature with encryption handling
+  - Error handling and retry strategy
