@@ -50,7 +50,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Spec | Status | File |
 |------|--------|------|
 | Sync | ✅ Done | `specs/sync.md` |
-| Notifications | Not Started | `specs/notifications.md` |
+| Notifications | ✅ Done | `specs/notifications.md` |
 | Location-Based Tags | Not Started | `specs/location-tags.md` |
 
 ## Research Sources
@@ -290,3 +290,23 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Sync states and offline support with queue
   - Mail Drop: email-to-inbox feature with encryption handling
   - Error handling and retry strategy
+
+### 2026-01-03 - Iteration 19
+- Researched OmniFocus notification system and alert settings
+- Researched badge counts, Today widget, and Apple Watch complications
+- Created notifications.md specification covering:
+  - Automatic notification types: due, deferred, latest_start, planned, location
+  - Per-item notifications: before_due (relative) and custom (Pro, absolute)
+  - Notification data model with kind, anchor, and fire offset
+  - Before-due options from 1 minute to 4 weeks
+  - Global settings: notify_on_due, notify_on_deferred, due_soon_threshold
+  - Badge configuration: app icon (overdue/due_soon/flagged) and sidebar badges
+  - iOS badge limitations (sync-triggered only, not real-time)
+  - Sound settings with per-type configuration
+  - Interactive notification actions: complete, snooze (15 min)
+  - Today widget item types and Forecast widget
+  - Apple Watch complications and complication sources
+  - Location notifications with geofence triggers
+  - Calendar alarms integration (14-day lookahead)
+  - Notification lifecycle for date changes and repeating items
+  - Platform differences matrix (macOS, iOS, Watch, Web)
