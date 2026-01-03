@@ -28,7 +28,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Due Dates | ✅ Done | `specs/due-dates.md` |
 | Defer Dates | ✅ Done | `specs/defer-dates.md` |
 | Repeat Patterns | ✅ Done | `specs/repeat.md` |
-| Availability | Not Started | `specs/availability.md` |
+| Availability | ✅ Done | `specs/availability.md` |
 
 ### Priority 3: Views/Perspectives
 | Spec | Status | File |
@@ -147,3 +147,19 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Properties carried forward vs reset
   - Repeating projects with task reset
   - Edge cases: no dates, dropping vs completing, subtasks
+
+### 2026-01-03 - Iteration 9
+- Researched OmniFocus task availability and blocking conditions
+- Researched first available, next action, and status calculations
+- Created availability.md specification covering:
+  - Task status enum: available, blocked, next, due_soon, overdue, completed, dropped
+  - Six blocking conditions: defer, sequential, project status, tag status, allows_next_action, parent
+  - Complete availability formula combining all conditions
+  - Remaining vs Available distinction (set relationship)
+  - Project type effects: parallel, sequential, single-action
+  - Nested action groups with independent types
+  - First available calculation and edge cases
+  - Effective properties: defer_date (max), due_date (min), flagged (OR)
+  - Queries: available_tasks, remaining_tasks, blocked_by
+  - View filtering and visual indicators
+- Priority 2: Date/Time System is now COMPLETE
