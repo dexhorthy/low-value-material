@@ -130,6 +130,23 @@ AI enhancements:
 - [x] Duplicate attachment detection
 - [x] Bidirectional linking between tasks and source attachments
 
+### Priority 9: AI-Enhanced Notifications & Smart Alerts (MEDIUM)
+**Status**: COMPLETED
+**Base Specs**: notifications.md, location-tags.md
+
+See `improved_specs/ai-notifications.md` for full specification.
+
+AI enhancements:
+- [x] Smart notification timing based on user engagement patterns
+- [x] Context-aware delivery (respects meetings, focus states, DND)
+- [x] Intelligent bundling with LLM-generated summaries
+- [x] Predictive reminders before explicit due dates
+- [x] Alert fatigue prevention with automatic throttling
+- [x] Morning briefings and evening summaries
+- [x] Cross-platform notification intelligence
+- [x] Location-aware smart triggers with travel time prediction
+- [x] Notification feedback loop for continuous improvement
+
 ## Progress Log
 
 | Date | Item | Status | Notes |
@@ -147,6 +164,7 @@ AI enhancements:
 | 2026-01-03 | Wishlist: Auto-tag | ALREADY DONE | Already covered in `ai-organization.md` Auto-Tagging section |
 | 2026-01-03 | Wishlist: Tag Cleanup | ALREADY DONE | Already covered in `ai-organization.md` Tag Lifecycle Management section |
 | 2026-01-03 | Priority 8: AI Notes & Attachments | COMPLETED | Created `ai-notes-attachments.md` with voice transcription, OCR, document summarization, task extraction |
+| 2026-01-03 | Priority 9: AI Notifications & Smart Alerts | COMPLETED | Created `ai-notifications.md` with smart timing, bundling, predictive reminders, fatigue prevention |
 
 ## Implementation Notes
 
