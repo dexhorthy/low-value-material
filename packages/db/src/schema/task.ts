@@ -13,7 +13,9 @@ export const tasks = pgTable("tasks", {
   flagged: boolean("flagged").notNull().default(false),
   estimatedDuration: integer("estimated_duration"), // minutes
   dueDate: timestamp("due_date", { withTimezone: true }),
+  dueTimeSpecified: boolean("due_time_specified").notNull().default(false),
   deferDate: timestamp("defer_date", { withTimezone: true }),
+  deferTimeSpecified: boolean("defer_time_specified").notNull().default(false),
   completedAt: timestamp("completed_at", { withTimezone: true }),
   droppedAt: timestamp("dropped_at", { withTimezone: true }),
   projectId: uuid("project_id"), // FK to projects - constraint added in migration

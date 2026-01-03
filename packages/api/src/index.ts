@@ -21,7 +21,9 @@ export const createTask = os
         flagged: input.flagged ?? false,
         estimatedDuration: input.estimatedDuration ?? null,
         dueDate: input.dueDate ?? null,
+        dueTimeSpecified: input.dueTimeSpecified ?? false,
         deferDate: input.deferDate ?? null,
+        deferTimeSpecified: input.deferTimeSpecified ?? false,
         projectId: input.projectId ?? null,
         parentTaskId: input.parentTaskId ?? null,
         tentativeProjectId: input.tentativeProjectId ?? null,
@@ -157,6 +159,86 @@ export const deleteTask = os
     return { success: true };
   });
 
+// Get overdue tasks (due date in the past)
+export const overdueTasks = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const result = await db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          lt(tasks.dueDate, now),
+          eq(tasks.status, "active")
+        )
+      )
+      .orderBy(asc(tasks.dueDate));
+    return result;
+  });
+
+// Get due soon tasks (within threshold hours)
+export const dueSoonTasks = os
+  .input(z.object({ thresholdHours: z.number().int().positive().optional() }).optional())
+  .handler(async ({ input }) => {
+    const thresholdHours = input?.thresholdHours ?? 48; // default 48 hours per spec
+    const now = new Date();
+    const threshold = new Date(now.getTime() + thresholdHours * 60 * 60 * 1000);
+    const result = await db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          gt(tasks.dueDate, now),
+          lt(tasks.dueDate, threshold),
+          eq(tasks.status, "active")
+        )
+      )
+      .orderBy(asc(tasks.dueDate));
+    return result;
+  });
+
+// Get available tasks (not deferred)
+export const availableTasks = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const result = await db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.status, "active"),
+          // Available if no defer date or defer date has passed
+          // Using SQL OR: deferDate IS NULL OR deferDate <= now
+        )
+      )
+      .orderBy(asc(tasks.order), desc(tasks.createdAt));
+
+    // Filter in application layer for OR condition
+    return result.filter(task =>
+      task.deferDate === null || task.deferDate <= now
+    );
+  });
+
+// Get deferred tasks (defer date in the future)
+export const deferredTasks = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const result = await db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          gt(tasks.deferDate, now),
+          eq(tasks.status, "active")
+        )
+      )
+      .orderBy(asc(tasks.deferDate));
+    return result;
+  });
+
 // Router - plain object with procedures
 export const router = {
   task: {
@@ -168,6 +250,10 @@ export const router = {
     drop: dropTask,
     restore: restoreTask,
     delete: deleteTask,
+    overdue: overdueTasks,
+    dueSoon: dueSoonTasks,
+    available: availableTasks,
+    deferred: deferredTasks,
   },
   folder: folderRouter,
   project: projectRouter,

@@ -61,12 +61,12 @@ Complete the data model from specs:
 | Entity relationships | ✅ Done | foreign keys, cascades, junction tables |
 
 ### Phase 3: Date/Time System
-**Status**: Not Started
+**Status**: In Progress
 
 | Feature | Status | Spec |
 |---------|--------|------|
-| Due dates | ⏳ Pending | specs/due-dates.md |
-| Defer dates | ⏳ Pending | specs/defer-dates.md |
+| Due dates | 🟡 Partial | specs/due-dates.md - time-specified field, overdue/dueSoon queries added |
+| Defer dates | 🟡 Partial | specs/defer-dates.md - time-specified field, available/deferred queries added |
 | Repeat patterns | ⏳ Pending | specs/repeat.md |
 | Availability calculation | ⏳ Pending | specs/availability.md |
 
@@ -139,6 +139,8 @@ Complete the data model from specs:
 | 2026-01-03 | Phase 5 | Configured BAML clients for Anthropic Claude and OpenAI GPT-4o-mini |
 | 2026-01-03 | Phase 5 | Generated BAML TypeScript client and integrated with API layer |
 | 2026-01-03 | Phase 5 | Created capture router with extractTasks, checkDuplicate, createFromExtraction endpoints |
+| 2026-01-03 | Phase 3 | Added dueTimeSpecified and deferTimeSpecified fields to task/project schemas |
+| 2026-01-03 | Phase 3 | Added overdue, dueSoon, available, deferred task query endpoints (21 tests passing) |
 
 ## Commands
 
@@ -176,7 +178,8 @@ docker compose down  # Stop services
 10. ~~Create packages/ai with BAML task extraction schema (Phase 5)~~ ✅
 11. Generate and run database migrations (Phase 2)
 12. ~~Integrate AI capture with API layer (Phase 5)~~ ✅
-13. Implement due dates and defer dates (Phase 3)
-14. Implement repeat patterns (Phase 3)
-15. Add Electric SQL sync layer (Phase 6)
-16. Implement AI task suggestions (Phase 5)
+13. ~~Add due/defer time-specified flags and state queries (Phase 3)~~ ✅
+14. Complete effective due/defer date inheritance (Phase 3)
+15. Implement repeat patterns (Phase 3)
+16. Add Electric SQL sync layer (Phase 6)
+17. Implement AI task suggestions (Phase 5)

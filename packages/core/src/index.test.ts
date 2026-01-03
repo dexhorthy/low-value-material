@@ -39,6 +39,19 @@ describe("CreateTaskInput", () => {
     expect(result.estimatedDuration).toBe(30);
   });
 
+  test("validates task input with time-specified flags", () => {
+    const input = {
+      title: "Meeting prep",
+      dueDate: new Date("2026-01-15T14:00:00Z"),
+      dueTimeSpecified: true,
+      deferDate: new Date("2026-01-14T09:00:00Z"),
+      deferTimeSpecified: true,
+    };
+    const result = CreateTaskInput.parse(input);
+    expect(result.dueTimeSpecified).toBe(true);
+    expect(result.deferTimeSpecified).toBe(true);
+  });
+
   test("rejects empty title", () => {
     expect(() => CreateTaskInput.parse({ title: "" })).toThrow();
   });
@@ -59,7 +72,9 @@ describe("TaskSchema", () => {
       flagged: false,
       estimatedDuration: null,
       dueDate: null,
+      dueTimeSpecified: false,
       deferDate: null,
+      deferTimeSpecified: false,
       completedAt: null,
       droppedAt: null,
       projectId: null,
@@ -73,6 +88,35 @@ describe("TaskSchema", () => {
     const result = TaskSchema.parse(task);
     expect(result.id).toBe(task.id);
     expect(result.status).toBe("active");
+    expect(result.dueTimeSpecified).toBe(false);
+    expect(result.deferTimeSpecified).toBe(false);
+  });
+
+  test("validates task with time-specified dates", () => {
+    const task = {
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      title: "Meeting prep",
+      note: null,
+      status: "active" as const,
+      flagged: false,
+      estimatedDuration: 30,
+      dueDate: new Date("2026-01-15T14:00:00Z"),
+      dueTimeSpecified: true,
+      deferDate: new Date("2026-01-14T09:00:00Z"),
+      deferTimeSpecified: true,
+      completedAt: null,
+      droppedAt: null,
+      projectId: null,
+      parentTaskId: null,
+      tentativeProjectId: null,
+      tentativeParentTaskId: null,
+      order: 0,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+    };
+    const result = TaskSchema.parse(task);
+    expect(result.dueTimeSpecified).toBe(true);
+    expect(result.deferTimeSpecified).toBe(true);
   });
 });
 
