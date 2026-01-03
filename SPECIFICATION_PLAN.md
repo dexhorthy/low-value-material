@@ -65,6 +65,11 @@ OmniFocus is a task management application built around the Getting Things Done 
 |------|--------|------|
 | AI Capabilities | ✅ Done | `specs/ai-capabilities.md` |
 
+### Priority 8: Data Management
+| Spec | Status | File |
+|------|--------|------|
+| Backup & Data Management | ✅ Done | `specs/backup-data-management.md` |
+
 ## Research Sources
 - [OmniFocus Features](https://www.omnigroup.com/omnifocus/features)
 - [Zapier GTD + OmniFocus Guide](https://zapier.com/blog/getting-things-done-gtd-omnifocus/)
@@ -414,3 +419,34 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Future directions: smarter scheduling, effort optimization, context awareness
 - Added Priority 7: Advanced Features to track emerging capabilities
 - ALL SPECIFICATIONS COMPLETE (23 specifications across 7 priority tiers)
+
+### 2026-01-03 - Iteration 25
+- Researched OmniFocus backup, restore, and data management features
+- Researched automatic backup system (2-hour Mac, daily mobile schedule)
+- Researched backup retention (up to 100 backups, ~2 weeks continuous use)
+- Researched restore process with preview and revert capability
+- Researched archiving system for completed/dropped items
+- Researched export formats: OmniFocus, TaskPaper, HTML, CSV, Backup Document
+- Researched import capabilities from previous versions and TaskPaper
+- Researched database maintenance and size management strategies
+- Created backup-data-management.md specification covering:
+  - Database structure and file locations by platform
+  - Automatic backup schedule: 2-hour (Mac) vs daily (mobile)
+  - Backup triggers: scheduled, pre-sync, pre-migration, pre-restore
+  - Manual backup operations and export to .ofocus-backup
+  - Restore operations with preview window and data loss warnings
+  - Sync impact: restore replaces server data, forces device resync
+  - Archive system for reducing database size and improving performance
+  - Archive operations: move completed/dropped items to separate file
+  - Archive storage options including iCloud Drive for multi-Mac access
+  - Export formats by platform: full support on Mac, CSV-only on mobile
+  - TaskPaper plain text format with @tag metadata
+  - Simple HTML with embedded styles and CSV UTF-8/UTF-16
+  - Import from previous versions with database migration
+  - Import TaskPaper with automatic project/task/tag creation
+  - Database health checking and size reduction recommendations
+  - Security considerations for backups, exports, and archives
+  - Platform differences matrix across macOS/iOS/visionOS/Web
+  - Best practices for users and implementers
+- Added Priority 8: Data Management to track data protection features
+- ALL SPECIFICATIONS COMPLETE (24 specifications across 8 priority tiers)
