@@ -53,6 +53,13 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Notifications | ✅ Done | `specs/notifications.md` |
 | Location-Based Tags | ✅ Done | `specs/location-tags.md` |
 
+### Priority 6: Data Model Extensions
+| Spec | Status | File |
+|------|--------|------|
+| Attachments | ✅ Done | `specs/attachments.md` |
+| Rich Text Notes | ⏳ Pending | `specs/notes.md` |
+| Automation | ⏳ Pending | `specs/automation.md` |
+
 ## Research Sources
 - [OmniFocus Features](https://www.omnigroup.com/omnifocus/features)
 - [Zapier GTD + OmniFocus Guide](https://zapier.com/blog/getting-things-done-gtd-omnifocus/)
@@ -324,4 +331,19 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Platform considerations (mobile vs desktop vs web)
   - Best practices for location tag organization
 - Priority 5: Platform Features is now COMPLETE
-- ALL SPECIFICATIONS COMPLETE
+
+### 2026-01-03 - Iteration 21
+- Identified missing specifications referenced in task.md "Out of Scope" section
+- Researched OmniFocus attachment support via official docs and support articles
+- Researched file embedding vs linking, sync behavior, platform differences
+- Created attachments.md specification covering:
+  - Attachment data model with embedded/linked storage types
+  - Supported content types by platform (images, documents, audio, video)
+  - Operations: add, remove, export, get attachment data
+  - Attachment List management interface with sort/filter/batch operations
+  - Sync behavior for embedded (syncs) vs linked (local only) attachments
+  - Size recommendations and warnings (10MB single file, 500MB total)
+  - Platform integration: macOS drag-drop/Quick Look, iOS camera/scanner/Files
+  - Mail Drop integration for email attachments
+  - Automation support via URL scheme, Shortcuts, Omni Automation
+- Added Priority 6: Data Model Extensions to track remaining specs
