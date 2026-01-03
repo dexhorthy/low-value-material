@@ -27,7 +27,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 |------|--------|------|
 | Due Dates | ✅ Done | `specs/due-dates.md` |
 | Defer Dates | ✅ Done | `specs/defer-dates.md` |
-| Repeat Patterns | Not Started | `specs/repeat.md` |
+| Repeat Patterns | ✅ Done | `specs/repeat.md` |
 | Availability | Not Started | `specs/availability.md` |
 
 ### Priority 3: Views/Perspectives
@@ -133,3 +133,17 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Queries for available, deferred, becoming available
   - Visual treatment: grayed text for deferred items
   - Best practices: use for hiding future work, not scheduling
+
+### 2026-01-03 - Iteration 8
+- Researched OmniFocus repeat patterns and recurring task options
+- Researched OmniFocus 4.7 repeat limits and catch-up features
+- Created repeat.md specification covering:
+  - Three schedule types: regularly, due again, defer again
+  - Anchor date options: defer, due, or planned date
+  - Repeat intervals: minutes to years, with weekday selection
+  - Repeat limits: end after date or end after count (4.7+)
+  - Catch up automatically: skip missed occurrences (4.7+)
+  - Completion behavior: original completed, new instance created
+  - Properties carried forward vs reset
+  - Repeating projects with task reset
+  - Edge cases: no dates, dropping vs completing, subtasks
