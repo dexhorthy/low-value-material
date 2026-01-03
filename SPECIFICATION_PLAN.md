@@ -41,7 +41,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 ### Priority 4: Organization Features
 | Spec | Status | File |
 |------|--------|------|
-| Focus Mode | Not Started | `specs/focus-mode.md` |
+| Focus Mode | ✅ Done | `specs/focus-mode.md` |
 | Quick Capture | Not Started | `specs/quick-capture.md` |
 | Search | Not Started | `specs/search.md` |
 | Batch Editing | Not Started | `specs/batch-editing.md` |
@@ -220,3 +220,17 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Syncing and version compatibility
   - Automation access for programmatic creation
 - Priority 3: Views/Perspectives is now COMPLETE
+
+### 2026-01-03 - Iteration 14
+- Researched OmniFocus Focus mode for narrowing database scope
+- Researched focus persistence, visual indicators, and iOS/macOS integration
+- Created focus-mode.md specification covering:
+  - Focus state: is_focused, focused_items, focus_scope
+  - Operations: focus_on, unfocus, toggle_focus, add_to_focus, remove_from_focus
+  - Scope calculation: folders include nested contents recursively
+  - Effect on perspectives: intersects with perspective filters
+  - Visual indicators: focus bar with unfocus button
+  - Persistence: session-based, not synced between devices
+  - iOS/macOS Focus Mode integration for automatic context switching
+  - Keyboard shortcuts: ⌘⇧F for focus/unfocus
+  - Settings: remember_focus, inbox_during_focus, search_respects_focus
