@@ -15,28 +15,17 @@ The GTD Weekly Review is critical but often skipped due to effort. AI-assisted r
 
 ### What Users See
 
-Each project displays a health grade (A through F) with a numeric score (0-100). The grade provides at-a-glance status while the score enables tracking improvements over time.
+Each project displays a health grade (Excellent, Good, Fair, Poor, Critical) with a numeric score. The grade provides at-a-glance status while the score enables tracking improvements over time.
 
-**Grade scale:**
-- **A (90-100)**: Excellent - project is on track with recent progress
-- **B (75-89)**: Good - project is healthy with minor issues
-- **C (60-74)**: Fair - needs attention soon
-- **D (40-59)**: Poor - significant issues present
-- **F (0-39)**: Critical - requires immediate action
+### What Influences Health
 
-### Health Factors
-
-The health score considers multiple signals:
-
-| Factor | What it measures |
-|--------|------------------|
-| Progress | Are tasks being completed? Recent activity? |
-| Freshness | When was the last action taken? |
-| Clarity | Do tasks have clear next actions? |
-| Dates | Are due dates realistic? How many overdue? |
-| Review | Is the project being reviewed on schedule? |
-| Structure | Appropriate number of tasks? Not bloated? |
-| Blockers | Are tasks stuck waiting on dependencies? |
+The system considers multiple signals to assess a project's health:
+- **Progress**: Are tasks being completed? Is there recent activity?
+- **Clarity**: Do tasks have clear next actions and well-defined outcomes?
+- **Dates**: Are due dates realistic and being met?
+- **Activity**: Is the project actively being worked on or reviewed?
+- **Structure**: Is the project appropriately sized and focused?
+- **Blockers**: Are tasks stuck waiting on dependencies or external factors?
 
 ## Zombie Task Detection
 
@@ -46,36 +35,34 @@ A zombie task is one that exists but is effectively dead - unlikely to ever be c
 
 ### Types of Zombie Tasks
 
-| Type | Description | Typical Action |
-|------|-------------|----------------|
-| Ancient | Very old, never touched | Drop or clarify |
-| Perpetually Deferred | Rescheduled 3+ times | Move to someday/maybe |
-| Abandoned | In a dead or inactive project | Drop or revive project |
-| Vague Forever | Never clarified despite age | Clarify or drop |
-| Duplicate Ignored | Similar to completed task | Drop |
-| Context Lost | References outdated information | Update or drop |
+The system identifies several patterns of zombie tasks:
+- **Ancient**: Very old with no recent progress, often forgotten
+- **Perpetually Deferred**: Repeatedly rescheduled but never acted on
+- **Abandoned**: Left in an inactive or dropped project
+- **Vague Forever**: Unclear goals despite age, never properly clarified
+- **Duplicate Ignored**: Similar to a task that was already completed
+- **Context Lost**: References outdated information or dependencies
 
 ### How Zombies are Identified
 
-A task may be flagged as a zombie when it exhibits patterns like:
-- Created 6+ months ago with no recent activity
-- Deferred three or more times
-- Title is vague (no action verb, too short, ends with "?")
-- Project has been inactive for months
+The system flags potential zombie tasks based on patterns like:
+- Extended age with no recent activity
+- Repeated deferrals without progress
+- Unclear or vague task titles
+- Associated project showing no recent activity
 
 ## Stalled Project Detection
 
 ### What is a Stalled Project?
 
-A project that isn't making progress despite being marked as active. The system detects various stall patterns:
+A project that isn't making progress despite being marked as active. The system detects when projects lose momentum and suggests ways to revive them.
 
-| Stall Type | What it means | Suggested Fix |
-|------------|---------------|---------------|
-| Empty | No remaining tasks | Add next action or complete project |
-| All Deferred | Every task is scheduled for the future | Review defer dates |
-| Blocked | First task can't be started | Remove blocker or add different task |
-| Waiting | All tasks waiting on others | Follow up or add independent tasks |
-| Inactive | Has available tasks but no recent activity | Prioritize, put on hold, or reconsider |
+**Common stall patterns:**
+- **No available tasks**: All tasks deferred or blocked with nothing to start
+- **All deferred**: Every remaining task is scheduled for a future date
+- **Blocked progression**: The first task can't be started due to blockers
+- **Waiting dependent**: All tasks waiting on external input or other work
+- **Inactive with capacity**: Has available work but no recent progress
 
 ## Smart Review Prioritization
 
@@ -83,12 +70,12 @@ A project that isn't making progress despite being marked as active. The system 
 
 Instead of reviewing projects in arbitrary order, the system prioritizes by urgency. Projects needing review most appear first.
 
-**Urgency factors:**
-- How overdue is the review?
-- Is the project stalled?
-- Are there overdue tasks?
-- What's the health score?
-- Are there zombie tasks?
+**What makes a project high priority:**
+- Review is significantly overdue
+- Project shows stall patterns
+- Contains overdue tasks
+- Health status is declining
+- Has potential zombie tasks
 
 The queue shows estimated review time for each project, helping users plan their review session.
 
@@ -96,19 +83,18 @@ The queue shows estimated review time for each project, helping users plan their
 
 ### Cleanup Categories
 
-The system groups cleanup opportunities:
+The system identifies cleanup opportunities across your projects and inbox:
 
-| Category | What it finds |
-|----------|---------------|
-| Zombie tasks | Tasks to drop or clarify |
-| Probably done | Tasks that are actually complete |
-| Duplicates | Similar tasks to merge |
-| Inactive projects | Projects to archive or drop |
-| Unrealistic dates | Due dates that have passed or are impossible |
-| Vague tasks | Tasks needing clearer next actions |
-| Inbox overflow | Items sitting in inbox too long |
+**Types of suggestions:**
+- **Zombie tasks**: Tasks unlikely to be completed, suggesting drop or clarification
+- **Possibly completed**: Tasks that appear done but aren't marked complete
+- **Duplicates**: Similar tasks that could be consolidated
+- **Stale projects**: Projects showing no recent activity, worth archiving or dropping
+- **Unrealistic dates**: Due dates that have passed or lack sufficient time
+- **Unclear next steps**: Tasks with vague descriptions needing clarification
+- **Inbox backlog**: Items waiting too long for processing
 
-Each suggestion includes why it was flagged and what action to take.
+Each suggestion explains why it was identified and what action you might take.
 
 ## Review Session Flow
 
@@ -199,12 +185,12 @@ The summary includes observations, trends, and recommendations:
 
 ## User Settings
 
+Users can configure how the review system works for their needs:
+
 | Setting | Default | Description |
 |---------|---------|-------------|
 | Smart prioritization | On | Order review queue by urgency |
 | Show health scores | On | Display project health metrics |
-| Zombie threshold | 180 days | Age before task is flagged |
-| Stale threshold | 30 days | Inactivity before project is stale |
 | Auto-detect issues | On | Find problems automatically |
 | Generate insights | On | AI-generated review insights |
 | Cleanup suggestions | On | Show cleanup recommendations |
