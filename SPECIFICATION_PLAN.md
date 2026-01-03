@@ -26,7 +26,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Spec | Status | File |
 |------|--------|------|
 | Due Dates | ✅ Done | `specs/due-dates.md` |
-| Defer Dates | Not Started | `specs/defer-dates.md` |
+| Defer Dates | ✅ Done | `specs/defer-dates.md` |
 | Repeat Patterns | Not Started | `specs/repeat.md` |
 | Availability | Not Started | `specs/availability.md` |
 
@@ -119,3 +119,17 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Queries for due on date, overdue, due soon, due in range
   - Forecast integration and notifications
   - Best practices: use sparingly for hard deadlines only
+
+### 2026-01-03 - Iteration 7
+- Researched OmniFocus defer dates vs due dates vs planned dates
+- Researched OmniFocus 4.7 Planned Dates for scheduling without hiding
+- Created defer-dates.md specification covering:
+  - Defer date data model with all-day vs specific time support
+  - Default defer time (midnight) vs default due time (5 PM)
+  - Defer states: deferred (grayed, hidden) → available (normal)
+  - Effective defer date calculation using max() (opposite of due date min())
+  - Interaction with due dates: defer + due for time-boxed work
+  - Planned dates as third date type (scheduling without hiding)
+  - Queries for available, deferred, becoming available
+  - Visual treatment: grayed text for deferred items
+  - Best practices: use for hiding future work, not scheduling
