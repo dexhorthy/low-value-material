@@ -86,7 +86,7 @@ Complete the data model from specs:
 | Feature | Status | Spec |
 |---------|--------|------|
 | BAML schema setup | ✅ Done | improved_specs/ai-processing-reference.md |
-| AI capture & NLP parsing | ⏳ Pending | improved_specs/ai-capture.md |
+| AI capture & NLP parsing | ✅ Done | improved_specs/ai-capture.md - API endpoints for extraction |
 | Task suggestions | ⏳ Pending | improved_specs/ai-suggestions.md |
 | Auto-tagging | ⏳ Pending | improved_specs/ai-organization.md |
 | Smart scheduling | ⏳ Pending | improved_specs/ai-scheduling.md |
@@ -137,6 +137,8 @@ Complete the data model from specs:
 | 2026-01-03 | Phase 5 | Created packages/ai with BAML schema for task extraction |
 | 2026-01-03 | Phase 5 | Added ExtractTasks and CheckDuplicate functions with confidence scoring |
 | 2026-01-03 | Phase 5 | Configured BAML clients for Anthropic Claude and OpenAI GPT-4o-mini |
+| 2026-01-03 | Phase 5 | Generated BAML TypeScript client and integrated with API layer |
+| 2026-01-03 | Phase 5 | Created capture router with extractTasks, checkDuplicate, createFromExtraction endpoints |
 
 ## Commands
 
@@ -173,7 +175,8 @@ docker compose down  # Stop services
 9. ~~Implement Inbox behavior (Phase 2)~~ ✅
 10. ~~Create packages/ai with BAML task extraction schema (Phase 5)~~ ✅
 11. Generate and run database migrations (Phase 2)
-12. Integrate AI capture with API layer (Phase 5)
+12. ~~Integrate AI capture with API layer (Phase 5)~~ ✅
 13. Implement due dates and defer dates (Phase 3)
 14. Implement repeat patterns (Phase 3)
 15. Add Electric SQL sync layer (Phase 6)
+16. Implement AI task suggestions (Phase 5)

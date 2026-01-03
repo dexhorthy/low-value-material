@@ -16,6 +16,7 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@lvm/ai": "workspace:*",
     "@lvm/core": "workspace:*",
     "@lvm/db": "workspace:*",
     "@orpc/server": "^1.4.3",

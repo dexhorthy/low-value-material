@@ -9,7 +9,7 @@
     "check": "turbo run check",
     "test": "turbo run test",
     "format": "oxlint --fix . && oxformat .",
-    "lint": "oxlint .",
+    "lint": "oxlint --ignore-pattern '**/baml_client/**' .",
     "db:generate": "turbo run db:generate --filter=@lvm/db",
     "db:migrate": "turbo run db:migrate --filter=@lvm/db",
     "db:push": "turbo run db:push --filter=@lvm/db",

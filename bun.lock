@@ -45,6 +45,7 @@
       "name": "@lvm/api",
       "version": "0.0.1",
       "dependencies": {
+        "@lvm/ai": "workspace:*",
         "@lvm/core": "workspace:*",
         "@lvm/db": "workspace:*",
         "@orpc/client": "^1.4.3",

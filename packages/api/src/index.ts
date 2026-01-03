@@ -7,6 +7,7 @@ import { folderRouter } from "./folder";
 import { projectRouter } from "./project";
 import { tagRouter } from "./tag";
 import { inboxRouter } from "./inbox";
+import { captureRouter } from "./capture";
 
 // Create a new task
 export const createTask = os
@@ -172,6 +173,7 @@ export const router = {
   project: projectRouter,
   tag: tagRouter,
   inbox: inboxRouter,
+  capture: captureRouter,
 };
 
 export type Router = typeof router;
