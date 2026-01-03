@@ -113,6 +113,23 @@ AI enhancements:
 - [x] Voice-to-perspective creation with progressive refinement
 - [x] Proactive perspective suggestions based on behavior patterns
 
+### Priority 8: AI-Enhanced Notes & Attachments (MEDIUM)
+**Status**: COMPLETED
+**Base Specs**: notes.md, attachments.md
+
+See `improved_specs/ai-notes-attachments.md` for full specification.
+
+AI enhancements:
+- [x] Voice memo transcription with action item extraction
+- [x] OCR for images, screenshots, whiteboards, handwritten notes
+- [x] Document summarization and key point extraction
+- [x] Automatic task generation from attachment content
+- [x] Smart note formatting and context extraction
+- [x] Cross-attachment search (OCR text, transcripts, documents)
+- [x] Automatic categorization and tagging of attachments
+- [x] Duplicate attachment detection
+- [x] Bidirectional linking between tasks and source attachments
+
 ## Progress Log
 
 | Date | Item | Status | Notes |
@@ -129,6 +146,7 @@ AI enhancements:
 | 2026-01-03 | Wishlist: Proactive Perspectives | COMPLETED | Added proactive perspective suggestions based on behavior patterns to `ai-search.md` |
 | 2026-01-03 | Wishlist: Auto-tag | ALREADY DONE | Already covered in `ai-organization.md` Auto-Tagging section |
 | 2026-01-03 | Wishlist: Tag Cleanup | ALREADY DONE | Already covered in `ai-organization.md` Tag Lifecycle Management section |
+| 2026-01-03 | Priority 8: AI Notes & Attachments | COMPLETED | Created `ai-notes-attachments.md` with voice transcription, OCR, document summarization, task extraction |
 
 ## Implementation Notes
 

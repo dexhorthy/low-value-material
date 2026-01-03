@@ -41,11 +41,7 @@ Transcription → LLM Processing:
   confidence: 0.88
 ```
 
-Voice processing pipeline:
-1. Speech-to-text transcription
-2. Intent detection and entity extraction
-3. Confidence scoring
-4. Confirmation UI (with edit capability)
+The user can review and edit the extracted information before saving, ensuring accuracy.
 
 ### Clipboard/Share Sheet
 
@@ -158,11 +154,7 @@ Tag matching:
   - "@development" (0.78 confidence)
 ```
 
-Matching strategies:
-1. Exact name match (highest confidence)
-2. Fuzzy name match (high confidence)
-3. Semantic similarity (medium confidence)
-4. Historical assignment patterns (medium confidence)
+The system tries to match against existing projects and tags, showing the most likely options with confidence indicators so the user can accept or correct them.
 
 ### Multi-Task Detection
 
@@ -181,15 +173,10 @@ UI prompt: "Create 3 separate tasks?"
 
 ### Context Enhancement
 
-The system can pull additional context:
-
-| Context Source | Enhancement |
-|----------------|-------------|
-| Calendar | "before my 2pm" → actual event time |
-| Location | "at the store" → nearest matching location tag |
-| Recent tasks | Similar task patterns suggest duration/project |
-| Email thread | Extract relevant details for task note |
-| URL content | Summarize linked content for note |
+When you reference calendar events, locations, recent tasks, or external content (emails, URLs), the system can use that context to improve extraction. For example:
+- "before my 2pm meeting" automatically extracts the actual meeting time
+- "at the store" can match to location-tagged contexts
+- Similar past tasks inform duration and project suggestions
 
 ## Confirmation UI
 
@@ -245,11 +232,7 @@ When multiple tasks detected:
 
 Before creating a task, the system checks for potential duplicates and presents options to the user.
 
-### Detection Methods
-1. **Exact match**: Same title (case-insensitive)
-2. **Fuzzy match**: High string similarity (>0.85)
-3. **Semantic match**: LLM determines same intent
-4. **Recent match**: Same task created in last 24h
+The system checks for potential duplicates using multiple approaches—exact title matches, similar wording, same semantic meaning, and tasks created very recently. When a potential duplicate is found, the user can decide to update the existing task or create a new one.
 
 UI for duplicates:
 ```
@@ -295,11 +278,10 @@ The system improves over time by tracking when users modify AI suggestions:
 
 ## Privacy Considerations
 
-- Voice processing should prefer on-device when possible
-- User can disable cloud-based AI extraction
-- Original input stored for audit/correction learning
-- No task content shared with third parties without consent
-- Local-only mode available (reduced AI features)
+- Users can disable cloud-based AI extraction if preferred
+- Task content is not shared with third parties without explicit consent
+- Users have full control over their data and can view what's being processed
+- A local-only mode is available for those who prioritize privacy over full AI features
 
 ## Edge Cases
 
