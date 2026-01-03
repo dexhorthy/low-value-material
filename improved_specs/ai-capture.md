@@ -89,58 +89,35 @@ Launcher features:
 
 ## LLM Task Extraction
 
-### Extraction Schema
+### What Gets Extracted
 
-The LLM extracts a structured `CaptureIntent` object:
+When processing user input, the system extracts:
 
-```typescript
-interface CaptureIntent {
-  // Core fields
-  title: string;
-  note?: string;
+**Core Task Information**
+- Title: A clear, actionable task title
+- Note: Additional details or context
 
-  // Date extraction
-  due_date?: {
-    value: DateTime;
-    confidence: number;
-    original_text: string;  // "tomorrow", "next Tuesday"
-  };
-  defer_date?: {
-    value: DateTime;
-    confidence: number;
-    original_text: string;
-  };
+**Date Information**
+- Due date with original text ("tomorrow", "next Tuesday")
+- Defer date if mentioned
+- Confidence level for each date interpretation
 
-  // Organization suggestions
-  suggested_project?: {
-    id?: UUID;           // Existing project match
-    name?: string;       // New project suggestion
-    confidence: number;
-  };
-  suggested_tags?: Array<{
-    id?: UUID;           // Existing tag match
-    name?: string;       // New tag suggestion
-    confidence: number;
-  }>;
+**Organization Suggestions**
+- Matching or new project suggestion
+- Relevant tag suggestions (existing or new)
+- Each with confidence scores
 
-  // Duration estimation
-  estimated_duration?: {
-    value: Duration;
-    confidence: number;
-  };
+**Task Metadata**
+- Estimated duration
+- Urgency indicators
+- Whether task is waiting on someone else
 
-  // Flags
-  is_urgent?: boolean;
-  is_waiting_for?: boolean;
+**Multi-Task Detection**
+- If input contains multiple tasks, each is extracted separately
 
-  // Multi-task detection
-  subtasks?: CaptureIntent[];
-
-  // Overall confidence
-  confidence: number;
-  requires_clarification?: string[];
-}
-```
+**Confidence & Clarification**
+- Overall confidence score
+- List of areas needing clarification
 
 ### Date/Time Parsing
 
@@ -266,18 +243,9 @@ When multiple tasks detected:
 
 ## Smart Duplicate Detection
 
-Before creating, check for potential duplicates:
+Before creating a task, the system checks for potential duplicates and presents options to the user.
 
-```typescript
-interface DuplicateCheck {
-  existing_task: Task;
-  similarity_score: number;  // 0-1
-  match_type: "exact" | "similar" | "related";
-  suggestion: "skip" | "merge" | "create_anyway";
-}
-```
-
-Detection methods:
+### Detection Methods
 1. **Exact match**: Same title (case-insensitive)
 2. **Fuzzy match**: High string similarity (>0.85)
 3. **Semantic match**: LLM determines same intent
@@ -295,124 +263,35 @@ UI for duplicates:
 └────────────────────────────────────────────┘
 ```
 
-## Data Model Extensions
+## Capture Metadata
 
-### Capture Metadata
+Each captured task retains metadata about how it was created:
 
-New fields on Task:
+- **Capture source**: How the task was input (text, voice, share, email, clipboard, API)
+- **Original input**: The raw user input before processing
+- **Extraction confidence**: How confident the AI was in its interpretation
+- **User modifications**: Which fields the user changed from AI suggestions
 
-```typescript
-interface CaptureMetadata {
-  capture_source: "text" | "voice" | "share" | "email" | "clipboard" | "api";
-  original_input: string;
-  ai_extracted: boolean;
-  extraction_confidence: number;
-  user_modified_fields: string[];  // Fields user changed from AI suggestion
-}
-```
+## Learning from Corrections
 
-### Learning from Corrections
+The system improves over time by tracking when users modify AI suggestions:
 
-Track when users modify AI suggestions to improve future extraction:
-
-```typescript
-interface CaptureCorrection {
-  capture_id: UUID;
-  field: string;
-  ai_suggested: any;
-  user_selected: any;
-  timestamp: DateTime;
-}
-```
-
-Use corrections to:
-- Fine-tune project/tag matching
-- Improve date parsing for user's vocabulary
-- Learn user's task naming patterns
-
-## API Endpoints
-
-### Parse Intent
-
-```
-POST /api/capture/parse
-{
-  "input": "Call mom tomorrow at 3pm",
-  "input_type": "text",
-  "context": {
-    "current_location": { "lat": 37.7, "lng": -122.4 },
-    "current_time": "2025-01-03T10:00:00Z",
-    "recent_projects": ["uuid1", "uuid2"]
-  }
-}
-
-Response:
-{
-  "intent": CaptureIntent,
-  "alternatives": CaptureIntent[],  // Other interpretations
-  "duplicates": DuplicateCheck[]
-}
-```
-
-### Create from Intent
-
-```
-POST /api/capture/create
-{
-  "intent": CaptureIntent,
-  "confirmed_fields": ["title", "due_date"],
-  "modified_fields": {
-    "project_id": "uuid-123"
-  }
-}
-
-Response:
-{
-  "task": Task,
-  "created_subtasks": Task[]
-}
-```
-
-### Transcribe Voice
-
-```
-POST /api/capture/transcribe
-{
-  "audio": base64_encoded_audio,
-  "format": "wav",
-  "language": "en"
-}
-
-Response:
-{
-  "transcription": "Call mom tomorrow at 3pm",
-  "confidence": 0.97,
-  "alternatives": ["Call mom tomorrow at 3:00 PM"]
-}
-```
+- Fine-tunes project and tag matching based on corrections
+- Improves date parsing for the user's vocabulary and patterns
+- Learns the user's preferred task naming conventions
 
 ## Settings
 
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `capture.auto_tag` | Boolean | true | Auto-suggest tags based on content |
-| `capture.auto_project` | Boolean | true | Auto-suggest project based on content |
-| `capture.auto_date` | Boolean | true | Extract dates from natural language |
-| `capture.confidence_threshold` | Float | 0.9 | Threshold for auto-confirm |
-| `capture.duplicate_check` | Boolean | true | Check for duplicates before create |
-| `capture.learn_from_corrections` | Boolean | true | Improve AI from user corrections |
-| `capture.voice_enabled` | Boolean | true | Enable voice capture |
-| `capture.global_hotkey` | KeyCombo | Cmd+Shift+Space | Desktop launcher shortcut |
-
-## Performance Requirements
-
-| Operation | Target Latency | Notes |
-|-----------|---------------|-------|
-| Text parsing | < 500ms | Local preprocessing + API call |
-| Voice transcription | < 1s | Streaming preferred |
-| Project/tag matching | < 100ms | Local fuzzy match |
-| Duplicate detection | < 200ms | Local + semantic |
-| Full capture flow | < 2s | End-to-end with confirmation |
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Auto-suggest tags | On | Suggest tags based on task content |
+| Auto-suggest project | On | Suggest project based on task content |
+| Auto-extract dates | On | Extract dates from natural language |
+| Confidence threshold | 90% | Threshold for auto-confirm (lower = more review) |
+| Duplicate check | On | Check for duplicates before creating |
+| Learn from corrections | On | Improve suggestions based on your edits |
+| Voice capture | On | Enable voice input |
+| Global hotkey | Cmd+Shift+Space | Desktop quick capture shortcut |
 
 ## Privacy Considerations
 
