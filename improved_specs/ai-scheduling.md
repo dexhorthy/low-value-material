@@ -26,15 +26,11 @@ Confidence: High (based on 8 similar tasks)
 
 ### How Estimates are Generated
 
-The system considers multiple signals to estimate duration:
+The system estimates duration by learning from your patterns:
 
-| Signal | Description | Weight |
-|--------|-------------|--------|
-| Similar tasks | Duration of completed tasks with similar titles/content | Highest |
-| User history | How long this user typically takes for this type of work | High |
-| Tag averages | Average duration for tasks with the same tags | Medium |
-| Project averages | Average duration for tasks in the same project | Medium |
-| Content analysis | AI assessment of task complexity | Lower |
+- **Similar tasks you've done**: How long similar tasks took in the past
+- **Your work patterns**: How much time you typically spend on different types of work
+- **Task complexity**: AI assessment of the effort required
 
 ### Estimation Factors Display
 
@@ -51,11 +47,7 @@ Why this estimate:
 
 ### Learning from Actuals
 
-The system improves over time by tracking actual vs estimated duration:
-- When you complete a task, actual time is compared to the estimate
-- Consistent over/under-estimation adjusts future predictions
-- Tag and project averages update with new data
-- Users who consistently take longer get calibrated estimates
+The system improves over time by learning from your actual task completion times. As you complete tasks, estimates become more accurate for similar work in the future.
 
 ## Optimal Timing Suggestions
 
@@ -80,15 +72,12 @@ Suggested times:
 
 ### Timing Factors
 
-The system considers:
+The system suggests timing based on:
 
-| Factor | What it considers |
-|--------|-------------------|
-| Task type | Deep work in morning, admin in afternoon |
-| Your patterns | When you typically complete similar tasks |
-| Energy requirements | High-energy tasks when you're fresh |
-| Deadline pressure | Urgent tasks scheduled earlier |
-| Calendar availability | Gaps between meetings |
+- **Your productivity patterns**: When you typically complete similar types of work
+- **Your calendar**: Gaps and focus time between meetings
+- **Task requirements**: High-focus work when you have uninterrupted time
+- **Urgency**: Tighter deadlines get priority consideration
 
 ### Defer Date Suggestions
 
@@ -115,12 +104,7 @@ Alternatives:
 
 ### How It Works
 
-The system notices when you create similar tasks repeatedly and offers to convert them into repeating tasks.
-
-**Detection criteria:**
-- At least 3 similar tasks created
-- Regular intervals between creations (daily, weekly, monthly, etc.)
-- Similar titles or content
+The system recognizes when you're creating similar tasks on a regular schedule and offers to automate them.
 
 ### Pattern Types Detected
 
@@ -160,22 +144,19 @@ Users can:
 
 ### Calendar Integration
 
-When connected to a calendar, the system understands your real availability:
+When connected to a calendar, the system understands your real availability by knowing:
 
-**Work hours configuration:**
-- Start/end times (e.g., 9 AM - 5 PM)
-- Work days (e.g., Monday-Friday)
-- Buffer time between events (e.g., 15 minutes)
+- Your work hours
+- Your working days
+- Time needed between meetings (buffer/transition time)
 
 ### Finding Available Time
 
-The system identifies different types of availability:
+The system identifies different types of time blocks and suggests appropriate tasks for each:
 
-| Window Type | Description | Best For |
-|-------------|-------------|----------|
-| Focus block | 60+ minutes uninterrupted | Deep work, writing |
-| Fragmented | 15-60 min between meetings | Quick tasks, admin |
-| Buffer | Small gaps (< 15 min) | Very quick wins only |
+- **Uninterrupted focus time**: For deep work and complex tasks
+- **Fragmented windows**: For quick tasks and administrative work
+- **Small gaps**: For very quick wins that fill spare moments
 
 **Example availability view:**
 ```
@@ -195,15 +176,15 @@ Today's availability:
 
 ### Workload Analysis
 
-The system analyzes your scheduled work to show utilization by day:
+The system analyzes your scheduled work to show if your days are balanced:
 
 **Workload status levels:**
-| Status | Utilization | Meaning |
-|--------|-------------|---------|
-| Light | < 50% | Plenty of capacity |
-| Balanced | 50-80% | Healthy workload |
-| Heavy | 80-100% | Near capacity |
-| Overloaded | > 100% | More work than available time |
+| Status | Meaning |
+|--------|---------|
+| Light | Plenty of free time |
+| Balanced | Healthy amount of scheduled work |
+| Heavy | Nearing your capacity |
+| Overloaded | More work scheduled than available time |
 
 ### Workload View
 
@@ -235,65 +216,59 @@ When overloaded days are detected, the system suggests ways to rebalance:
 - **Defer**: Push a non-urgent task to later
 - **Split**: Break a large task across multiple days
 
-The system only suggests moving tasks that:
-- Are not due on the overloaded day
-- Are not blocked by dependencies
-- Can fit in the destination day's available time
+The system considers task dependencies, due dates, and available time when making suggestions.
 
 ## Deadline Risk Prediction
 
 ### Risk Assessment
 
-The system proactively identifies tasks at risk of missing their deadline based on:
-- Available work hours until due date
-- Estimated task duration
-- Other scheduled commitments
-- Historical completion patterns
-- Dependencies that must complete first
+The system proactively identifies tasks at risk of missing their deadline by comparing:
+- Estimated time needed
+- Available time before the deadline
+- Other commitments you've already scheduled
 
 ### Risk Levels
 
-| Level | Meaning | Indicator |
-|-------|---------|-----------|
-| Low | More than 2x buffer time | Green |
-| Medium | 1-2x buffer time | Yellow |
-| High | Less than 1x buffer time | Orange |
-| Critical | Not enough time to complete | Red |
+| Level | Meaning |
+|-------|---------|
+| Low | Plenty of time to complete |
+| Medium | Doable but getting tight |
+| High | At risk without changes |
+| Critical | Not enough time remaining |
 
 ### Risk Factors
 
-The system explains why a task is at risk:
+The system explains why a task is at risk and suggests actions to mitigate:
 
 ```
 Task: Complete project proposal
 Due: Friday 5 PM
 Risk: HIGH ⚠️
 
-Risk factors:
-• Estimated 4 hours, but only 3 available hours
-• 2 blocking tasks must finish first (+2 hrs)
-• You typically run 25% over estimates
-• Heavy meeting schedule Thursday
+Why at risk:
+• Estimated time is close to available time
+• Blocking tasks need to complete first
+• Heavy meetings scheduled before deadline
 
-Mitigation options:
-• Start today instead of waiting
-• Reschedule Thursday meetings
-• Ask for deadline extension
+Options to reduce risk:
+• Start working today
+• Reschedule some meetings
+• Request a deadline extension
 ```
 
 ## User Settings
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Auto-estimate durations | On | Show duration estimates on tasks |
-| Suggest optimal timing | On | Offer scheduling suggestions |
-| Detect repeat patterns | On | Notice and suggest repeating tasks |
-| Workload alerts | On | Warn when days are overloaded |
-| Max tasks per day | 15 | Threshold for overload warnings |
-| Target utilization | 75% | Ideal daily capacity usage |
-| Buffer between tasks | 15 min | Gap between scheduled items |
-| Work hours | 9 AM - 5 PM | When you're available for work |
-| Work days | Mon-Fri | Days to include in scheduling |
+Users can configure:
+
+| Setting | Description |
+|---------|-------------|
+| Duration estimates | Enable/disable estimated task durations |
+| Timing suggestions | Enable/disable scheduling recommendations |
+| Repeat detection | Detect and suggest repeating tasks |
+| Workload alerts | Warn when scheduled work exceeds capacity |
+| Work availability | Set your work hours and available days |
+| Task spacing | Preferred gaps between scheduled items |
+| Capacity targets | How much of your day to fill with scheduled work |
 
 ## Related Specifications
 
