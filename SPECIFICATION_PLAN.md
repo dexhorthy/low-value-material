@@ -58,7 +58,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 |------|--------|------|
 | Attachments | ✅ Done | `specs/attachments.md` |
 | Rich Text Notes | ✅ Done | `specs/notes.md` |
-| Automation | ⏳ Pending | `specs/automation.md` |
+| Automation | ✅ Done | `specs/automation.md` |
 
 ## Research Sources
 - [OmniFocus Features](https://www.omnigroup.com/omnifocus/features)
@@ -365,3 +365,25 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Note: Markdown NOT supported; uses Rich Text Format (RTF)
   - Platform considerations for macOS, iOS, Web, Vision Pro
   - Automation via URL scheme, Shortcuts, and Omni Automation JavaScript
+
+### 2026-01-03 - Iteration 23
+- Researched OmniFocus automation systems and integration methods
+- Researched Omni Automation JavaScript API (version 3.13.1)
+- Researched URL schemes for navigation and task creation
+- Researched AppleScript support and dictionary
+- Researched Shortcuts integration and actions (iOS/iPadOS/macOS)
+- Created automation.md specification covering:
+  - Omni Automation: JavaScript API with cross-platform support (macOS, iOS, iPadOS, visionOS)
+  - Core capabilities: database access, task/project/folder/tag CRUD, completion, attachments
+  - Plug-in system: action/perspective/resource types, distribution, execution context
+  - Advanced features: HTTP requests, forms, speech synthesis, credential storage, crypto
+  - URL Schemes: navigation URLs, /add action with 15+ parameters, /paste for TaskPaper import
+  - x-callback-url support for automation chaining
+  - AppleScript: Mac-only Pro feature, full object model, script folder integration
+  - Shortcuts: 7 built-in actions (Add Item, Find Items/Projects/Tags, Run Script, etc.)
+  - Security model: user consent, keychain storage, sandboxed file access
+  - Platform matrix showing feature availability across devices
+  - Best practices: choosing automation methods, error handling, performance optimization
+  - Example workflows: daily planning, weekly review, quick capture, project templates
+- Priority 6: Data Model Extensions is now COMPLETE
+- ALL SPECIFICATIONS COMPLETE (22 specifications across 6 priority tiers)
