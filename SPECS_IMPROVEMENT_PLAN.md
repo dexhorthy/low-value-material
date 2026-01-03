@@ -100,14 +100,16 @@ AI enhancements:
 - [x] Workload balancing suggestions
 
 ### Priority 7: Natural Language Search & Queries (LOW)
-**Status**: Not Started
-**Base Specs**: perspectives.md
+**Status**: COMPLETED
+**Base Specs**: search.md, perspectives.md, custom-perspectives.md
+
+See `improved_specs/ai-search.md` for full specification.
 
 AI enhancements:
-- [ ] Semantic search across all items
-- [ ] Natural language perspective creation
-- [ ] Conversational task queries
-- [ ] Smart filtering suggestions
+- [x] Semantic search across all items
+- [x] Natural language perspective creation
+- [x] Conversational task queries
+- [x] Smart filtering suggestions
 
 ## Progress Log
 
@@ -120,6 +122,7 @@ AI enhancements:
 | 2026-01-03 | Priority 4: AI-Assisted Review | COMPLETED | Created `ai-review.md` with health scoring, zombie detection, stalled projects, cleanup suggestions |
 | 2026-01-03 | Priority 5: MCP Integration | COMPLETED | Created `mcp-integration.md` with task automation, webhooks, context enrichment, progress tracking |
 | 2026-01-03 | Priority 6: Predictive Scheduling | COMPLETED | Created `ai-scheduling.md` with duration estimation, timing suggestions, pattern detection, workload balancing |
+| 2026-01-03 | Priority 7: NL Search & Queries | COMPLETED | Created `ai-search.md` with semantic search, NL perspective creation, conversational queries, smart filtering |
 
 ## Implementation Notes
 
