@@ -33,7 +33,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 ### Priority 3: Views/Perspectives
 | Spec | Status | File |
 |------|--------|------|
-| Perspectives Core | Not Started | `specs/perspectives.md` |
+| Perspectives Core | ✅ Done | `specs/perspectives.md` |
 | Forecast View | Not Started | `specs/forecast.md` |
 | Review System | Not Started | `specs/review.md` |
 | Custom Perspectives | Not Started | `specs/custom-perspectives.md` |
@@ -163,3 +163,18 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Queries: available_tasks, remaining_tasks, blocked_by
   - View filtering and visual indicators
 - Priority 2: Date/Time System is now COMPLETE
+
+### 2026-01-03 - Iteration 10
+- Researched OmniFocus perspectives, built-in views, and custom perspectives
+- Researched perspective editor, filter rules, grouping, and sorting
+- Created perspectives.md specification covering:
+  - Built-in perspectives: Inbox, Projects, Tags, Flagged, Forecast, Review, Nearby
+  - Reference perspectives: Completed, Changed
+  - Custom perspectives (Pro feature) with full editor
+  - Filter rule hierarchy with All/Any/None operators
+  - Condition types: status, dates, containers, text, duration
+  - Display modes: entire projects vs individual actions
+  - Grouping options: ungrouped, project, tag, dates, flagged
+  - Sorting options with multiple criteria and direction
+  - Sidebar/Home configuration and ordering
+  - Syncing and version compatibility
