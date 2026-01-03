@@ -280,3 +280,90 @@ export const InboxStatsSchema = z.object({
   overdue: z.number().int(),
 });
 export type InboxStats = z.infer<typeof InboxStatsSchema>;
+
+// ============================================================================
+// Effective Date Calculation - specs/due-dates.md, specs/defer-dates.md
+// ============================================================================
+
+/**
+ * Calculates the effective due date for an item.
+ * Per specs/due-dates.md: effective_due_date = min(item.due_date, parent.effective_due_date, project.due_date)
+ * Returns the EARLIEST non-null date (most urgent deadline wins).
+ */
+export function calculateEffectiveDueDate(
+  itemDueDate: Date | null,
+  parentEffectiveDueDate: Date | null,
+  projectDueDate: Date | null
+): Date | null {
+  const dates = [itemDueDate, parentEffectiveDueDate, projectDueDate].filter(
+    (d): d is Date => d !== null
+  );
+  if (dates.length === 0) return null;
+  return new Date(Math.min(...dates.map((d) => d.getTime())));
+}
+
+/**
+ * Calculates the effective defer date for an item.
+ * Per specs/defer-dates.md: effective_defer_date = max(item.defer_date, parent.effective_defer_date, project.defer_date)
+ * Returns the LATEST non-null date (parent deferral blocks children).
+ */
+export function calculateEffectiveDeferDate(
+  itemDeferDate: Date | null,
+  parentEffectiveDeferDate: Date | null,
+  projectDeferDate: Date | null
+): Date | null {
+  const dates = [itemDeferDate, parentEffectiveDeferDate, projectDeferDate].filter(
+    (d): d is Date => d !== null
+  );
+  if (dates.length === 0) return null;
+  return new Date(Math.max(...dates.map((d) => d.getTime())));
+}
+
+/**
+ * Checks if an item is available based on its effective defer date.
+ * Available if: effective_defer_date is null OR effective_defer_date <= now
+ */
+export function isAvailable(effectiveDeferDate: Date | null, now: Date = new Date()): boolean {
+  return effectiveDeferDate === null || effectiveDeferDate <= now;
+}
+
+/**
+ * Checks if an item is deferred based on its effective defer date.
+ * Deferred if: effective_defer_date > now
+ */
+export function isDeferred(effectiveDeferDate: Date | null, now: Date = new Date()): boolean {
+  return effectiveDeferDate !== null && effectiveDeferDate > now;
+}
+
+/**
+ * Checks if an item is overdue based on its effective due date.
+ * Overdue if: effective_due_date < now
+ */
+export function isOverdue(effectiveDueDate: Date | null, now: Date = new Date()): boolean {
+  return effectiveDueDate !== null && effectiveDueDate < now;
+}
+
+/**
+ * Checks if an item is due soon based on its effective due date and threshold.
+ * Due soon if: now < effective_due_date <= now + threshold_hours
+ */
+export function isDueSoon(
+  effectiveDueDate: Date | null,
+  now: Date = new Date(),
+  thresholdHours: number = 48
+): boolean {
+  if (effectiveDueDate === null) return false;
+  const threshold = new Date(now.getTime() + thresholdHours * 60 * 60 * 1000);
+  return effectiveDueDate > now && effectiveDueDate <= threshold;
+}
+
+/**
+ * Task with computed effective dates for use in queries and views.
+ */
+export const TaskWithEffectiveDatesSchema = TaskSchema.extend({
+  effectiveDueDate: z.date().nullable(),
+  effectiveDeferDate: z.date().nullable(),
+  hasLocalDueDate: z.boolean(),
+  hasLocalDeferDate: z.boolean(),
+});
+export type TaskWithEffectiveDates = z.infer<typeof TaskWithEffectiveDatesSchema>;

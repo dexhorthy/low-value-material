@@ -1,13 +1,73 @@
 import { os } from "@orpc/server";
 import { z } from "zod";
-import { db, tasks } from "@lvm/db";
-import { CreateTaskInput, UpdateTaskInput, TaskFilterSchema } from "@lvm/core";
+import { db, tasks, projects } from "@lvm/db";
+import {
+  CreateTaskInput,
+  UpdateTaskInput,
+  TaskFilterSchema,
+  calculateEffectiveDueDate,
+  calculateEffectiveDeferDate,
+  isAvailable,
+  isDeferred,
+  isOverdue,
+  isDueSoon,
+} from "@lvm/core";
 import { eq, and, lt, gt, isNull, desc, asc } from "drizzle-orm";
 import { folderRouter } from "./folder";
 import { projectRouter } from "./project";
 import { tagRouter } from "./tag";
 import { inboxRouter } from "./inbox";
 import { captureRouter } from "./capture";
+
+// Helper to compute effective dates for a task by traversing hierarchy
+async function computeEffectiveDates(taskId: string): Promise<{
+  effectiveDueDate: Date | null;
+  effectiveDeferDate: Date | null;
+  hasLocalDueDate: boolean;
+  hasLocalDeferDate: boolean;
+}> {
+  // Fetch the task
+  const task = await db.query.tasks.findFirst({
+    where: eq(tasks.id, taskId),
+  });
+  if (!task) {
+    return {
+      effectiveDueDate: null,
+      effectiveDeferDate: null,
+      hasLocalDueDate: false,
+      hasLocalDeferDate: false,
+    };
+  }
+
+  // Get parent task's effective dates (if exists)
+  let parentEffectiveDue: Date | null = null;
+  let parentEffectiveDefer: Date | null = null;
+  if (task.parentTaskId) {
+    const parentDates = await computeEffectiveDates(task.parentTaskId);
+    parentEffectiveDue = parentDates.effectiveDueDate;
+    parentEffectiveDefer = parentDates.effectiveDeferDate;
+  }
+
+  // Get project's dates (if exists)
+  let projectDue: Date | null = null;
+  let projectDefer: Date | null = null;
+  if (task.projectId) {
+    const project = await db.query.projects.findFirst({
+      where: eq(projects.id, task.projectId),
+    });
+    if (project) {
+      projectDue = project.dueDate;
+      projectDefer = project.deferDate;
+    }
+  }
+
+  return {
+    effectiveDueDate: calculateEffectiveDueDate(task.dueDate, parentEffectiveDue, projectDue),
+    effectiveDeferDate: calculateEffectiveDeferDate(task.deferDate, parentEffectiveDefer, projectDefer),
+    hasLocalDueDate: task.dueDate !== null,
+    hasLocalDeferDate: task.deferDate !== null,
+  };
+}
 
 // Create a new task
 export const createTask = os
@@ -42,6 +102,23 @@ export const getTask = os
       with: { subtasks: true },
     });
     return task ?? null;
+  });
+
+// Get task with computed effective dates (inheritance-aware)
+export const getTaskWithEffectiveDates = os
+  .input(z.object({ id: z.string().uuid() }))
+  .handler(async ({ input }) => {
+    const task = await db.query.tasks.findFirst({
+      where: eq(tasks.id, input.id),
+      with: { subtasks: true },
+    });
+    if (!task) return null;
+
+    const effectiveDates = await computeEffectiveDates(input.id);
+    return {
+      ...task,
+      ...effectiveDates,
+    };
   });
 
 // List tasks with filters
@@ -239,21 +316,146 @@ export const deferredTasks = os
     return result;
   });
 
+// Get tasks with effective dates computed (inheritance-aware query)
+export const listTasksWithEffectiveDates = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.status, "active"))
+      .orderBy(asc(tasks.order), desc(tasks.createdAt));
+
+    // Compute effective dates for each task
+    const tasksWithDates = await Promise.all(
+      allTasks.map(async (task) => {
+        const effectiveDates = await computeEffectiveDates(task.id);
+        return { ...task, ...effectiveDates };
+      })
+    );
+    return tasksWithDates;
+  });
+
+// Get overdue tasks using EFFECTIVE due dates (inheritance-aware)
+export const overdueTasksEffective = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.status, "active"));
+
+    const tasksWithDates = await Promise.all(
+      allTasks.map(async (task) => {
+        const effectiveDates = await computeEffectiveDates(task.id);
+        return { ...task, ...effectiveDates };
+      })
+    );
+
+    return tasksWithDates
+      .filter((task) => isOverdue(task.effectiveDueDate, now))
+      .sort((a, b) => {
+        if (!a.effectiveDueDate || !b.effectiveDueDate) return 0;
+        return a.effectiveDueDate.getTime() - b.effectiveDueDate.getTime();
+      });
+  });
+
+// Get due soon tasks using EFFECTIVE due dates (inheritance-aware)
+export const dueSoonTasksEffective = os
+  .input(z.object({ thresholdHours: z.number().int().positive().optional() }).optional())
+  .handler(async ({ input }) => {
+    const thresholdHours = input?.thresholdHours ?? 48;
+    const now = new Date();
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.status, "active"));
+
+    const tasksWithDates = await Promise.all(
+      allTasks.map(async (task) => {
+        const effectiveDates = await computeEffectiveDates(task.id);
+        return { ...task, ...effectiveDates };
+      })
+    );
+
+    return tasksWithDates
+      .filter((task) => isDueSoon(task.effectiveDueDate, now, thresholdHours))
+      .sort((a, b) => {
+        if (!a.effectiveDueDate || !b.effectiveDueDate) return 0;
+        return a.effectiveDueDate.getTime() - b.effectiveDueDate.getTime();
+      });
+  });
+
+// Get available tasks using EFFECTIVE defer dates (inheritance-aware)
+export const availableTasksEffective = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.status, "active"))
+      .orderBy(asc(tasks.order), desc(tasks.createdAt));
+
+    const tasksWithDates = await Promise.all(
+      allTasks.map(async (task) => {
+        const effectiveDates = await computeEffectiveDates(task.id);
+        return { ...task, ...effectiveDates };
+      })
+    );
+
+    return tasksWithDates.filter((task) => isAvailable(task.effectiveDeferDate, now));
+  });
+
+// Get deferred tasks using EFFECTIVE defer dates (inheritance-aware)
+export const deferredTasksEffective = os
+  .input(z.object({}).optional())
+  .handler(async () => {
+    const now = new Date();
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.status, "active"));
+
+    const tasksWithDates = await Promise.all(
+      allTasks.map(async (task) => {
+        const effectiveDates = await computeEffectiveDates(task.id);
+        return { ...task, ...effectiveDates };
+      })
+    );
+
+    return tasksWithDates
+      .filter((task) => isDeferred(task.effectiveDeferDate, now))
+      .sort((a, b) => {
+        if (!a.effectiveDeferDate || !b.effectiveDeferDate) return 0;
+        return a.effectiveDeferDate.getTime() - b.effectiveDeferDate.getTime();
+      });
+  });
+
 // Router - plain object with procedures
 export const router = {
   task: {
     create: createTask,
     get: getTask,
+    getWithEffectiveDates: getTaskWithEffectiveDates,
     list: listTasks,
+    listWithEffectiveDates: listTasksWithEffectiveDates,
     update: updateTask,
     complete: completeTask,
     drop: dropTask,
     restore: restoreTask,
     delete: deleteTask,
+    // Simple queries (task's own dates only)
     overdue: overdueTasks,
     dueSoon: dueSoonTasks,
     available: availableTasks,
     deferred: deferredTasks,
+    // Effective queries (inheritance-aware)
+    overdueEffective: overdueTasksEffective,
+    dueSoonEffective: dueSoonTasksEffective,
+    availableEffective: availableTasksEffective,
+    deferredEffective: deferredTasksEffective,
   },
   folder: folderRouter,
   project: projectRouter,
