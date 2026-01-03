@@ -110,6 +110,8 @@ AI enhancements:
 - [x] Natural language perspective creation
 - [x] Conversational task queries
 - [x] Smart filtering suggestions
+- [x] Voice-to-perspective creation with progressive refinement
+- [x] Proactive perspective suggestions based on behavior patterns
 
 ## Progress Log
 
@@ -123,6 +125,10 @@ AI enhancements:
 | 2026-01-03 | Priority 5: MCP Integration | COMPLETED | Created `mcp-integration.md` with task automation, webhooks, context enrichment, progress tracking |
 | 2026-01-03 | Priority 6: Predictive Scheduling | COMPLETED | Created `ai-scheduling.md` with duration estimation, timing suggestions, pattern detection, workload balancing |
 | 2026-01-03 | Priority 7: NL Search & Queries | COMPLETED | Created `ai-search.md` with semantic search, NL perspective creation, conversational queries, smart filtering |
+| 2026-01-03 | Wishlist: Voice-to-Perspective | COMPLETED | Added voice-to-perspective creation with progressive refinement to `ai-search.md` |
+| 2026-01-03 | Wishlist: Proactive Perspectives | COMPLETED | Added proactive perspective suggestions based on behavior patterns to `ai-search.md` |
+| 2026-01-03 | Wishlist: Auto-tag | ALREADY DONE | Already covered in `ai-organization.md` Auto-Tagging section |
+| 2026-01-03 | Wishlist: Tag Cleanup | ALREADY DONE | Already covered in `ai-organization.md` Tag Lifecycle Management section |
 
 ## Implementation Notes
 
@@ -158,6 +164,8 @@ This allows tasks to:
 
 ## Wishlist (maintained by project manager)
 
-- text-or-voice to perspective generator
-- auto-tag
-- recurring tag cleanup and re-organization
+All wishlist items have been addressed:
+
+- [x] **text-or-voice to perspective generator** - See `ai-search.md` Voice-to-Perspective Creation section
+- [x] **auto-tag** - See `ai-organization.md` Auto-Tagging section
+- [x] **recurring tag cleanup and re-organization** - See `ai-organization.md` Tag Lifecycle Management section

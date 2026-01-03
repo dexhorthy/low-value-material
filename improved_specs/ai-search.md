@@ -91,6 +91,211 @@ Users can create saved perspectives by describing what they want in plain langua
 
 If the preview doesn't match expectations, users can provide feedback like "also include tasks from my home office" and the system will adjust the filters accordingly.
 
+## Voice-to-Perspective Creation
+
+Voice input provides a hands-free, conversational way to create perspectives. This is especially powerful on mobile or during capture moments when typing is inconvenient.
+
+### Voice Creation Flow
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│         🎤  Creating Perspective...                               │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  You said:                                                        │
+│  "Show me all my work calls that are due this week"              │
+│                                                                   │
+│  I understood:                                                    │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │ Name: Work Calls This Week                                   │ │
+│  │ Icon: 📞                                                     │ │
+│  │                                                              │ │
+│  │ Filters:                                                     │ │
+│  │   • Tagged: @work                                           │ │
+│  │   • Tagged: @calls                                          │ │
+│  │   • Due: This week                                          │ │
+│  │   • Status: Available                                       │ │
+│  │                                                              │ │
+│  │ 7 tasks match                                                │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+│                                                                   │
+│  🎤 "Looks good" or tell me what to change                       │
+│                                                                   │
+│  [🎤 Keep Talking]    [✓ Create]    [✕ Cancel]                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Progressive Voice Refinement
+
+Multi-turn voice conversations allow iterative refinement without switching input modes:
+
+```
+User (voice): "Create a perspective for my high priority tasks"
+
+System: Created "High Priority Tasks" with 12 matches.
+        Filters: Flagged = true, Status = Available
+
+User (voice): "Also include things due tomorrow"
+
+System: Updated filters. Now showing 18 tasks.
+        Added: Due = Tomorrow
+
+User (voice): "But not the ones tagged waiting"
+
+System: Got it. Excluding @waiting. Now 15 tasks.
+
+User (voice): "Perfect, save it"
+
+System: ✓ Perspective "High Priority Tasks" saved to sidebar
+```
+
+### Voice Commands During Creation
+
+| Voice Command | Action |
+|--------------|--------|
+| "Save it" / "Create it" / "Looks good" | Finalize and save perspective |
+| "Cancel" / "Never mind" | Abort creation |
+| "Add [filter]" / "Also include [criteria]" | Add filter condition |
+| "Remove [filter]" / "But not [criteria]" | Remove or exclude condition |
+| "Change the name to [name]" | Rename the perspective |
+| "Show me the preview" | Read back matching tasks |
+| "How many match?" | Report current match count |
+| "Start over" | Clear all filters and restart |
+
+### Voice Intent Extraction
+
+The system extracts structured filters from natural voice input:
+
+| Spoken Phrase | Extracted Filter |
+|--------------|-----------------|
+| "work calls" | Tags: @work, @calls |
+| "due this week" | Due date: This week |
+| "quick tasks" | Duration: < 15 minutes |
+| "overdue" | Status: Overdue |
+| "important" / "flagged" | Flagged: true |
+| "not waiting" | Exclude tag: @waiting |
+| "the acme project" | Project: Acme |
+| "at home" | Tag: @home |
+
+### Disambiguation via Voice
+
+When intent is ambiguous, the system asks clarifying questions that can be answered by voice:
+
+```
+User (voice): "Show me tasks for the meeting"
+
+System: I found a few possibilities:
+        1. Tasks tagged @meetings (8 tasks)
+        2. Tasks in project "Q1 Planning Meeting" (3 tasks)
+        3. Tasks containing "meeting" in the title (12 tasks)
+
+        Which did you mean? You can say "one", "two", or "three"
+
+User (voice): "The first one"
+
+System: Got it. Creating perspective for tasks tagged @meetings.
+```
+
+### On-Device Voice Processing
+
+For privacy and speed, initial voice processing happens on-device when possible:
+
+| Stage | Processing Location | Latency |
+|-------|-------------------|---------|
+| Speech-to-text | On-device | ~100ms |
+| Intent detection | On-device (simple) / Cloud (complex) | 50-300ms |
+| Filter generation | Cloud | ~200ms |
+| Task matching | Local database | ~50ms |
+
+## Proactive Perspective Suggestions
+
+The system observes user behavior patterns and proactively suggests perspectives that would help their workflow—surfacing them before users think to create them.
+
+### Pattern Detection
+
+The system watches for repeated behaviors that indicate a perspective would be valuable:
+
+| Pattern Type | Detection Method | Example |
+|-------------|-----------------|---------|
+| **Repeated Search** | Same query 3+ times in a week | User searches "budget" every Monday → suggest "Budget Tasks" perspective |
+| **Temporal Cluster** | Tasks consistently worked at same time | User works @calls tasks 9-10am → suggest "Morning Calls" perspective |
+| **Tag Combination** | Two tags frequently used together | @work + @urgent filtered together → suggest "Work Urgent" perspective |
+| **Workflow Sequence** | Consistent task completion patterns | User always does @email then @calls → suggest combined view |
+| **Missing Perspective** | High-value views not yet saved | User has many @errands tasks but no Errands perspective |
+
+### Proactive Suggestion UI
+
+Suggestions appear contextually, not intrusively:
+
+**In Search Results:**
+```
+┌────────────────────────────────────────────────────────────────┐
+│ Search: "budget"                                                │
+├────────────────────────────────────────────────────────────────┤
+│ 💡 You search for "budget" frequently.                          │
+│    Save as perspective "Budget Tasks"?                         │
+│    [Create]  [Not Now]  [Don't Suggest Again]                  │
+├────────────────────────────────────────────────────────────────┤
+│ Results (8 tasks)...                                            │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**In Weekly Review:**
+```
+┌────────────────────────────────────────────────────────────────┐
+│ Weekly Insights                                                 │
+├────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│ 📊 This week you worked on 12 tasks tagged @home-office        │
+│    but you don't have a Home Office perspective.               │
+│                                                                 │
+│    Would you like one? It would include:                       │
+│    • Available tasks tagged @home-office                       │
+│    • Sorted by due date                                        │
+│                                                                 │
+│    [Create Perspective]  [Maybe Later]                         │
+│                                                                 │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Via Morning Briefing:**
+```
+"Good morning! I noticed you often look at work tasks
+due this week on Monday mornings. Would you like me
+to create a 'Weekly Work Planning' perspective?"
+```
+
+### Suggestion Ranking
+
+When multiple suggestions are available, they're ranked by:
+
+1. **Frequency** - How often the user does this manually
+2. **Time savings** - How much time a perspective would save
+3. **Coverage** - How many tasks would be included
+4. **Recency** - How recently the pattern occurred
+
+### Learning from Responses
+
+User responses improve future recommendations:
+
+| Response | System Learning |
+|----------|----------------|
+| Accepted | Boost similar patterns, learn naming preferences |
+| Modified | Learn preferred filter adjustments |
+| Dismissed | Reduce confidence for this pattern |
+| "Don't suggest again" | Suppress this specific pattern permanently |
+
+### Suggestion Settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Proactive perspectives | On | Enable proactive perspective suggestions |
+| Suggestion frequency | Weekly | How often to suggest (daily/weekly/monthly) |
+| Minimum observations | 3 | Pattern occurrences before suggesting |
+| Show in search | On | Show suggestions in search results |
+| Show in review | On | Show suggestions during review |
+| Morning briefing | On | Include suggestions in morning briefing |
+
 ## Conversational Task Queries
 
 Users can have multi-turn conversations to explore and refine their task searches. The system maintains context across turns, understanding pronouns and refinements.
@@ -274,3 +479,7 @@ Research informing this specification:
 - [RAG Best Practices 2025](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/rag-best-practice-with-ai-search/4357711)
 - [Hybrid Search Strategies](https://www.elastic.co/search-labs/blog/elastic-query-dsl-structured-datasets)
 - [Conversational AI UX](https://futurepulseai.blog/2025/10/25/the-ux-and-front-end-challenges-of-ai-powered-search-and-rag-interfaces/)
+- [Voice-Enabled AI Workflow Builder 2025](https://blog.dograh.com/voice-enabled-ai-workflow-builder-what-actually-works-in-2025/)
+- [AI Voice Assistants for Enterprise](https://www.aimagicx.com/blog/ai-voice-assistants-enterprise-workplace-productivity-2025/)
+- [Voice-LLM Trends 2025](https://www.turing.com/resources/voice-llm-trends)
+- [Speech-to-Workflow Patterns](https://aiola.ai/product/speech-to-workflow/)
