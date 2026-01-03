@@ -4,7 +4,7 @@ import { relations } from "drizzle-orm";
 // Task status enum
 export const taskStatusEnum = pgEnum("task_status", ["active", "completed", "dropped"]);
 
-// Task table - based on specs/task.md
+// Task table - based on specs/task.md and specs/inbox.md
 export const tasks = pgTable("tasks", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
@@ -16,8 +16,11 @@ export const tasks = pgTable("tasks", {
   deferDate: timestamp("defer_date", { withTimezone: true }),
   completedAt: timestamp("completed_at", { withTimezone: true }),
   droppedAt: timestamp("dropped_at", { withTimezone: true }),
-  projectId: uuid("project_id"), // FK to projects (future)
+  projectId: uuid("project_id"), // FK to projects - constraint added in migration
   parentTaskId: uuid("parent_task_id").references((): AnyPgColumn => tasks.id, { onDelete: "cascade" }),
+  // Tentative assignment fields for Inbox items (specs/inbox.md)
+  tentativeProjectId: uuid("tentative_project_id"),
+  tentativeParentTaskId: uuid("tentative_parent_task_id"),
   order: integer("order").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   modifiedAt: timestamp("modified_at", { withTimezone: true }).notNull().defaultNow(),

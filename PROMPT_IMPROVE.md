@@ -23,7 +23,14 @@ Essentials to include:
 - no archive mechanism, use a real modern database that doesn't require regular archiving
 - data stored behind an API and can be synced anywhere
 - ability to handle a row with connected mcps/tools
+- no applescript / javascript api - we'll expose a rest api and CLI interface please
 
 <guidance>
-- your specs in improved_specs/ must stand alone and capture all content from specs/
+- your specs in improved_specs/ must stand alone and capture all content from specs/, but in a way that incorporates improvements
+your goal is to maintain clean room specs that focus on the user stories, experience, and mental model.
+
+The specs should focus on how the product works and why, less so about how its to be built or the code snippets.
+
+data modeling is okay but should be low-code or psuedo code. Focus on inputs outputs and user workflows please.
+
 </guidance>

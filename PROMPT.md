@@ -10,4 +10,23 @@
 
 <guidance>
 follow the AI guidance in @HOWTO.md as you're coding!
+
+stack (use context7 to research as relevant):
+- bun, bunx, bun run
+- typescript
+- oxlint and oxformat
+- ink for cli interface
+- react
+- tanstack db
+- tanstack router
+- tanstack query
+- tanstack table
+- uselivequery
+- electric sql
+- drizzle orm
+- postgres
+- docker compose for local dev w/ electric + postgres
+- orpc for api/frontend contracts
+- turborepo for monorepo
+- baml / boundaryml for ai inference and data modeling
 </guidance>
