@@ -233,6 +233,24 @@ AI enhancements:
 - [x] Smart compaction timing recommendations
 - [x] Cross-device usage pattern analysis
 
+### Priority 15: AI-Enhanced Settings & Preferences (LOW)
+**Status**: COMPLETED
+**Base Specs**: settings.md
+
+See `improved_specs/ai-settings.md` for full specification.
+
+AI enhancements:
+- [x] AI-powered settings recommendations based on usage patterns
+- [x] Adaptive settings that adjust based on context (work/personal/travel)
+- [x] Natural language settings configuration ("make my tasks easier to see")
+- [x] Settings health check with optimization suggestions
+- [x] Intelligent onboarding personalized to user goals
+- [x] Profile management for context-aware settings switching
+- [x] Cross-device settings intelligence (smart sync vs local decisions)
+- [x] Settings migration assistant from other task managers
+- [x] Predictive settings suggestions anticipating user needs
+- [x] Trial periods for testing recommendations before committing
+
 ## Progress Log
 
 | Date | Item | Status | Notes |
@@ -256,6 +274,7 @@ AI enhancements:
 | 2026-01-03 | Priority 12: AI-Enhanced Forecast View | COMPLETED | Created `ai-forecast.md` with AI-generated daily plans, smart time blocking, workload heatmaps, intelligent rescheduling, weekly planning assistant, predictive insights |
 | 2026-01-03 | Priority 13: AI-Enhanced Data Management | COMPLETED | Created `ai-data-management.md` with AI-powered health monitoring, intelligent backup scheduling, smart export/import, duplicate detection, quality analysis, migration assistance |
 | 2026-01-03 | Priority 14: AI-Enhanced Sync | COMPLETED | Created `ai-sync.md` with CRDT-based conflict freedom, AI conflict resolution, adaptive sync scheduling, battery/bandwidth optimization, smart device management, offline queue intelligence |
+| 2026-01-03 | Priority 15: AI-Enhanced Settings | COMPLETED | Created `ai-settings.md` with adaptive settings, natural language configuration, settings health check, intelligent onboarding, profile management, migration assistant, predictive suggestions |
 
 ## Implementation Notes
 
