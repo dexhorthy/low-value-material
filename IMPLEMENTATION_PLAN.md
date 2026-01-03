@@ -23,7 +23,7 @@ packages/
   db/                 # Drizzle schema, migrations, Electric sync
   api/                # oRPC router and procedures
   core/               # Shared types, business logic
-  ai/                 # BAML definitions and AI processing (future)
+  ai/                 # BAML definitions and AI processing
 apps/
   cli/                # Ink-based CLI application
   web/                # React web application (future)
@@ -81,11 +81,11 @@ Complete the data model from specs:
 | Custom perspectives | ⏳ Pending | specs/custom-perspectives.md |
 
 ### Phase 5: AI Features
-**Status**: Not Started
+**Status**: In Progress
 
 | Feature | Status | Spec |
 |---------|--------|------|
-| BAML schema setup | ⏳ Pending | improved_specs/ai-processing-reference.md |
+| BAML schema setup | ✅ Done | improved_specs/ai-processing-reference.md |
 | AI capture & NLP parsing | ⏳ Pending | improved_specs/ai-capture.md |
 | Task suggestions | ⏳ Pending | improved_specs/ai-suggestions.md |
 | Auto-tagging | ⏳ Pending | improved_specs/ai-organization.md |
@@ -134,6 +134,9 @@ Complete the data model from specs:
 | 2026-01-03 | Phase 2 | Added Inbox behavior with tentative assignments |
 | 2026-01-03 | Phase 2 | Created junction tables for task-tag and project-tag relationships |
 | 2026-01-03 | Phase 2 | Added unit tests for new schemas (19 tests passing) |
+| 2026-01-03 | Phase 5 | Created packages/ai with BAML schema for task extraction |
+| 2026-01-03 | Phase 5 | Added ExtractTasks and CheckDuplicate functions with confidence scoring |
+| 2026-01-03 | Phase 5 | Configured BAML clients for Anthropic Claude and OpenAI GPT-4o-mini |
 
 ## Commands
 
@@ -168,7 +171,9 @@ docker compose down  # Stop services
 7. ~~Implement Folder entity (Phase 2)~~ ✅
 8. ~~Implement Tag entity (Phase 2)~~ ✅
 9. ~~Implement Inbox behavior (Phase 2)~~ ✅
-10. Generate and run database migrations (Phase 2)
-11. Implement due dates and defer dates (Phase 3)
-12. Implement repeat patterns (Phase 3)
-13. Add Electric SQL sync layer (Phase 6)
+10. ~~Create packages/ai with BAML task extraction schema (Phase 5)~~ ✅
+11. Generate and run database migrations (Phase 2)
+12. Integrate AI capture with API layer (Phase 5)
+13. Implement due dates and defer dates (Phase 3)
+14. Implement repeat patterns (Phase 3)
+15. Add Electric SQL sync layer (Phase 6)
