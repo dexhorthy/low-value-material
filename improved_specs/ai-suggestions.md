@@ -68,19 +68,18 @@ Each suggestion includes an explanation. Common reasons include:
 - Different project - balance work across projects
 - Different tag - avoid task fatigue from repetition
 
-## Scoring and Ranking
+## Task Ranking
 
-Tasks are ranked by combining multiple factors with configurable weights:
+The system ranks tasks to show the most important first, balancing several considerations:
 
-| Factor | Default Weight | Purpose |
-|--------|----------------|---------|
-| Urgency | 35% | Deadlines matter most |
-| Context | 25% | Match current situation |
-| Pattern | 15% | Align with user habits |
-| Effort | 15% | Fit available time |
-| Dependency | 10% | Unblocking value |
+**What matters when ranking tasks:**
+- **Urgency**: Overdue tasks and approaching deadlines come first
+- **Context match**: Tasks suited to your current situation (location, time, energy level)
+- **Your patterns**: Tasks you typically do at this time of day or in similar situations
+- **Practical fit**: Whether you have enough time to actually start and make progress
+- **Unblocking value**: Whether completing this task enables other important work
 
-### Urgency Scoring
+### Urgency Levels
 
 | Situation | Priority |
 |-----------|----------|
@@ -90,12 +89,12 @@ Tasks are ranked by combining multiple factors with configurable weights:
 | Due this week | Medium |
 | Future or no due date | Lower |
 
-### Diversification
+### Balancing Suggestions
 
-To prevent suggesting only one type of task, the system ensures variety:
-- High-urgency items always surface
-- Limits tasks from the same project (after the first 2-3)
-- Limits suggestions with the same primary reason (max 2 of same type)
+To avoid overwhelming you with suggestions from only one project or type of work, suggestions are diversified across:
+- Different projects and areas
+- Different task types
+- Quick wins alongside deeper work
 
 ## Deadline Risk Assessment
 
@@ -110,30 +109,22 @@ The system proactively warns about tasks at risk of missing their deadline.
 | High | Less than 1x buffer time | Orange |
 | Critical | Not enough time to complete | Red |
 
-### Risk Factors
+### Understanding Risk
 
-When assessing risk, the system considers:
-- Estimated task duration vs available work hours
-- Calendar commitments between now and due date
-- User's historical accuracy on time estimates
-- Dependencies that must complete first
+The system flags tasks at risk when there isn't enough time or resources to complete them. When you see a risk warning, it means you should consider:
+- Starting sooner rather than waiting
+- Asking for a deadline extension
+- Breaking the task into smaller pieces
+- Rescheduling other commitments
 
-**Example risk warning:**
+**Example:**
 ```
 Task: Complete project proposal
 Due: Friday 5 PM
 Risk: HIGH
 
-Risk factors:
-• Estimated 4 hours, but only 3 available hours
-• 2 blocking tasks must finish first
-• You typically run 25% over estimates
-• Heavy meeting schedule Thursday
-
-Mitigation options:
-• Start today instead of waiting
-• Reschedule Thursday meetings
-• Ask for deadline extension
+This task needs more time than you have available with your current
+commitments. Consider starting today or discussing a deadline extension.
 ```
 
 ## Proactive Surfacing
