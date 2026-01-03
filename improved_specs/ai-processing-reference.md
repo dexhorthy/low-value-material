@@ -1,468 +1,194 @@
 # AI Processing Reference Specification
 
-This document provides reference documentation for structured generation and extraction patterns used throughout the AI-native task management system. It covers BAML for LLM interactions and Claude Agent SDK for agent-based workflows.
+This document describes how the AI-native task management system processes and understands user input. It covers the mental model for how AI extracts, validates, and learns from user interactions.
 
-## BAML for Structured Extraction
+## Overview
 
-BAML (BoundaryML) is a domain-specific language for generating structured outputs from LLMs with type-safe, validated responses.
+The system uses AI processing at several key points:
+- **Task capture**: Extracting structured task data from natural language
+- **Duplicate detection**: Identifying similar or identical existing tasks
+- **Task suggestions**: Recommending what to work on next
+- **Conversational interface**: Understanding and responding to user queries
 
-### Why BAML?
+## Task Capture Processing
 
-| Feature | Benefit |
-|---------|---------|
-| Schema-first | Define outputs as types, get validated results |
-| Multi-language | Generate clients for Python, TypeScript, Ruby, Go |
-| Day-1 model support | Works with any LLM, no native tool-calling required |
-| Schema-Aligned Parsing | Handles markdown in JSON, chain-of-thought, etc. |
-| Retry/validation built-in | Automatic reprompting on schema validation errors |
+### What Gets Extracted
 
-### Core Concepts
+When a user provides input (text, voice, shared content), the system extracts:
 
-**Types**: Define your data structures
-```baml
-class Task {
-  title string
-  due_date string?
-  tags string[]
-  estimated_minutes int?
-  confidence float
-}
+| Field | Description | Example |
+|-------|-------------|---------|
+| Title | Short, actionable task title | "Call mom about birthday party" |
+| Note | Additional context | "She wants to discuss catering options" |
+| Due date | When task should be done | "tomorrow 3pm" → specific date/time |
+| Defer date | When to start showing task | "next week" → Monday |
+| Project | Matched from existing projects | "Acme Website" (0.85 confidence) |
+| Tags | Matched or suggested tags | @calls, @family |
+| Duration | Estimated time to complete | 15 minutes |
+| Urgency | Whether task is time-sensitive | true/false |
+| Waiting | Whether blocked on someone | true if "waiting for John" |
+
+### Confidence Scores
+
+Each extracted field includes a confidence score (0-1):
+- **High confidence (0.9+)**: System is very sure, can auto-apply
+- **Medium confidence (0.7-0.9)**: Likely correct, user should confirm
+- **Low confidence (<0.7)**: Uncertain, ask user to clarify
+
+### Handling Ambiguity
+
+When input is unclear, the system:
+1. Provides best-guess interpretation
+2. Lists what needs clarification
+3. Offers alternative interpretations
+
+**Example:**
+```
+Input: "meeting on the 15th"
+
+Interpretation: Meeting on December 15
+Clarification needed: Which month?
+Alternatives: [November 15] [December 15] [January 15]
 ```
 
-**Functions**: Define LLM interactions with prompts
-```baml
-function ExtractTask(input: string) -> Task {
-  client Claude
-  prompt #"
-    Extract task information from this input:
-    ---
-    {{ input }}
-    ---
+## Duplicate Detection
 
-    {{ ctx.output_format }}
-  "#
-}
-```
+Before creating a task, the system checks for potential duplicates.
 
-**ctx.output_format**: Automatically injects the schema into the prompt, telling the LLM how to format its response.
+### Match Types
 
-### Task Capture Schema
+| Type | Description | Example |
+|------|-------------|---------|
+| Exact | Same meaning, possibly different wording | "Call mom" vs "Phone mom" |
+| Similar | Related but distinct tasks | "Call mom about party" vs "Call mom about gift" |
+| Related | Connected but clearly different | "Plan party" vs "Buy party supplies" |
 
-```baml
-// Date extraction with confidence
-class ExtractedDate {
-  value string @description("ISO 8601 datetime")
-  original_text string @description("The original text that was parsed")
-  confidence float @description("0-1 confidence score")
-}
+### User Options
 
-// Tag suggestion
-class TagSuggestion {
-  name string
-  confidence float
-  is_existing bool @description("Whether this matches an existing tag")
-}
+When a potential duplicate is found, user can:
+- **Update existing**: Add new info to the existing task
+- **Create anyway**: Make a new task despite similarity
+- **Skip**: Don't create the task
 
-// Project suggestion
-class ProjectSuggestion {
-  name string
-  confidence float
-  is_existing bool
-}
+## Task Suggestions
 
-// Main capture intent
-class CaptureIntent {
-  title string @description("Short, actionable task title")
-  note string? @description("Additional details or context")
+### Why Tasks Are Suggested
 
-  due_date ExtractedDate?
-  defer_date ExtractedDate?
+Each suggestion includes an explanation:
 
-  suggested_project ProjectSuggestion?
-  suggested_tags TagSuggestion[]
+**Urgency Reasons**
+- Overdue: Past due date
+- Due soon: Deadline approaching
+- At risk: Not enough time to complete before deadline
 
-  estimated_minutes int? @description("Estimated task duration")
-  is_urgent bool @description("Whether task seems time-sensitive")
-  is_waiting_for bool @description("Whether task depends on someone else")
+**Context Reasons**
+- Location match: You're near the tagged location
+- Time fit: Task duration fits available time
+- Energy match: Task complexity matches your energy level
 
-  subtasks CaptureIntent[] @description("Detected sub-tasks if input contains multiple items")
+**Pattern Reasons**
+- Typical time: You usually do this type of task now
+- Routine: Part of your regular workflow
 
-  overall_confidence float
-  clarification_needed string[]
-}
+**Productivity Reasons**
+- Quick win: Can be completed quickly
+- Unblocks others: Enables dependent tasks
+- Momentum: Keeps project moving
 
-// Main extraction function
-function ExtractTaskIntent(
-  input: string,
-  existing_tags: string[],
-  existing_projects: string[],
-  current_datetime: string
-) -> CaptureIntent {
-  client Claude
-  prompt #"
-    You are a task extraction assistant. Parse the user's input and extract structured task information.
+### Scoring Factors
 
-    Current date/time: {{ current_datetime }}
+Tasks are ranked by combining:
+- Urgency (deadlines, overdue status)
+- Context match (time, location, energy)
+- User patterns (when you typically do things)
+- Effort fit (task duration vs available time)
+- Dependencies (what unblocks other work)
 
-    Existing tags (match if relevant): {{ existing_tags }}
-    Existing projects (match if relevant): {{ existing_projects }}
+## Conversational Interface
 
-    User input:
-    ---
-    {{ input }}
-    ---
+### Understanding User Queries
 
-    Guidelines:
-    - Extract a clear, actionable title
-    - Parse any dates/times mentioned (relative to current datetime)
-    - Suggest matching tags and projects from existing lists
-    - Detect if input contains multiple separate tasks
-    - Set is_urgent=true for time-sensitive language
-    - Set is_waiting_for=true if task depends on someone else
-    - Include clarification_needed for ambiguous parts
+The system interprets natural language queries:
 
-    {{ ctx.output_format }}
-  "#
-}
-```
+| Query | Understanding |
+|-------|---------------|
+| "What's overdue?" | Find tasks past due date |
+| "Tasks for Acme project" | Filter by project |
+| "Quick tasks I can do now" | Available + short duration |
+| "What should I work on?" | Get AI suggestions |
 
-### Duplicate Detection Schema
+### Maintaining Context
 
-```baml
-class DuplicateCheck {
-  is_duplicate bool
-  similarity_score float
-  match_type string @description("exact | similar | related | none")
-  existing_task_id string?
-  suggestion string @description("skip | merge | create_anyway")
-  reasoning string
-}
+In multi-turn conversations, the system tracks:
+- Current topic being discussed
+- Active filters from previous queries
+- References like "it", "them", "those"
+- Last mentioned project or tag
 
-function CheckDuplicate(
-  new_task_title: string,
-  new_task_note: string?,
-  existing_tasks: string[]
-) -> DuplicateCheck {
-  client Claude
-  prompt #"
-    Determine if this new task is a duplicate of any existing task.
+This allows natural follow-ups like "just the urgent ones" without repeating context.
 
-    New task:
-    - Title: {{ new_task_title }}
-    - Note: {{ new_task_note }}
+## Learning and Improvement
 
-    Existing tasks:
-    {{ existing_tasks }}
+The system improves over time by tracking:
 
-    Consider:
-    - Exact duplicates (same meaning, different wording)
-    - Similar tasks (related but distinct)
-    - Tasks that could be merged
+### From Corrections
+- When users modify extracted data, the system learns preferences
+- Tag suggestions adjust based on which ones you accept or dismiss
+- Date parsing improves based on your vocabulary
 
-    {{ ctx.output_format }}
-  "#
-}
-```
+### From Patterns
+- When you typically do certain types of tasks
+- How long tasks actually take vs estimates
+- Which projects and tags you use together
 
-### Task Suggestion Schema
+### Privacy Controls
 
-```baml
-enum SuggestionReason {
-  OVERDUE @description("Task is past due date")
-  DUE_SOON @description("Task due within threshold")
-  QUICK_WIN @description("Short task that could be done now")
-  CONTEXT_MATCH @description("Matches current location/time/energy")
-  BLOCKED_CLEARED @description("Previously blocked task now available")
-  PATTERN_MATCH @description("User typically does this task at this time")
-}
+Users can:
+- Disable pattern learning entirely
+- Clear learned patterns
+- See what the system has learned
+- Opt out of cloud processing for on-device only
 
-class TaskSuggestion {
-  task_id string
-  reason SuggestionReason
-  score float @description("0-1 relevance score")
-  explanation string
-}
+## Processing Flow
 
-function SuggestNextTasks(
-  available_tasks: string[],
-  current_context: string,
-  user_patterns: string[],
-  limit: int
-) -> TaskSuggestion[] {
-  client Claude
-  prompt #"
-    Suggest the best tasks to work on right now.
-
-    Available tasks:
-    {{ available_tasks }}
-
-    Current context:
-    {{ current_context }}
-
-    User patterns (when they typically do certain tasks):
-    {{ user_patterns }}
-
-    Return up to {{ limit }} suggestions, prioritizing:
-    1. Overdue tasks
-    2. Tasks due soon
-    3. Quick wins (< 15 min)
-    4. Context matches
-    5. Pattern matches
-
-    {{ ctx.output_format }}
-  "#
-}
-```
-
-## Claude Agent SDK for Workflows
-
-The Claude Agent SDK enables building AI agents that can use tools, manage sessions, and execute complex workflows.
-
-### Core Concepts
-
-**Tools**: Define callable functions the agent can use
-```python
-from claude_agent_sdk import tool, create_sdk_mcp_server
-
-@tool("search_tasks", "Search for tasks by query", {"query": str, "limit": int})
-async def search_tasks(args):
-    results = await task_db.search(args["query"], limit=args["limit"])
-    return {
-        "content": [{"type": "text", "text": json.dumps(results)}]
-    }
-```
-
-**MCP Servers**: Group tools into logical servers
-```python
-task_tools = create_sdk_mcp_server(
-    name="task-manager",
-    version="1.0.0",
-    tools=[search_tasks, create_task, complete_task, update_task]
-)
-```
-
-**Agent Options**: Configure agent behavior
-```python
-from claude_agent_sdk import ClaudeAgentOptions
-
-options = ClaudeAgentOptions(
-    mcp_servers={"tasks": task_tools},
-    allowed_tools=[
-        "mcp__tasks__search_tasks",
-        "mcp__tasks__create_task",
-    ],
-    max_turns=10
-)
-```
-
-### Task Management Agent Tools
-
-```python
-from claude_agent_sdk import tool, create_sdk_mcp_server
-from typing import Any
-import json
-
-# Search tasks
-@tool("search_tasks", "Search tasks by text query", {
-    "query": str,
-    "include_completed": bool,
-    "limit": int
-})
-async def search_tasks(args: dict[str, Any]) -> dict[str, Any]:
-    results = await db.search_tasks(
-        query=args["query"],
-        include_completed=args.get("include_completed", False),
-        limit=args.get("limit", 10)
-    )
-    return {"content": [{"type": "text", "text": json.dumps(results)}]}
-
-# Create task
-@tool("create_task", "Create a new task", {
-    "title": str,
-    "project_id": str,
-    "due_date": str,
-    "tags": list,
-    "note": str
-})
-async def create_task(args: dict[str, Any]) -> dict[str, Any]:
-    task = await db.create_task(**args)
-    return {"content": [{"type": "text", "text": f"Created task: {task.id}"}]}
-
-# Complete task
-@tool("complete_task", "Mark a task as completed", {"task_id": str})
-async def complete_task(args: dict[str, Any]) -> dict[str, Any]:
-    await db.complete_task(args["task_id"])
-    return {"content": [{"type": "text", "text": f"Completed task: {args['task_id']}"}]}
-
-# Get suggestions
-@tool("get_suggestions", "Get AI-powered task suggestions", {
-    "context": str,
-    "limit": int
-})
-async def get_suggestions(args: dict[str, Any]) -> dict[str, Any]:
-    suggestions = await ai.suggest_tasks(
-        context=args["context"],
-        limit=args.get("limit", 5)
-    )
-    return {"content": [{"type": "text", "text": json.dumps(suggestions)}]}
-
-# Create MCP server
-task_agent_server = create_sdk_mcp_server(
-    name="task-agent",
-    version="1.0.0",
-    tools=[search_tasks, create_task, complete_task, get_suggestions]
-)
-```
-
-### Conversational Task Interface
-
-```python
-from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
-import asyncio
-
-async def chat_with_tasks(user_message: str):
-    options = ClaudeAgentOptions(
-        mcp_servers={"tasks": task_agent_server},
-        allowed_tools=[
-            "mcp__tasks__search_tasks",
-            "mcp__tasks__create_task",
-            "mcp__tasks__complete_task",
-            "mcp__tasks__get_suggestions",
-        ],
-        system_prompt="""You are a helpful task management assistant.
-        Help users manage their tasks by:
-        - Creating tasks from natural language
-        - Finding and completing tasks
-        - Suggesting what to work on next
-
-        Always confirm before creating or completing tasks."""
-    )
-
-    async with ClaudeSDKClient(options=options) as client:
-        await client.query(user_message)
-
-        async for msg in client.receive_response():
-            if hasattr(msg, 'result'):
-                return msg.result
-```
-
-### Workflow Example: Daily Review
-
-```python
-async def daily_review_workflow():
-    """Agent-driven daily review process."""
-
-    options = ClaudeAgentOptions(
-        mcp_servers={"tasks": task_agent_server},
-        system_prompt="""Conduct a daily review:
-        1. Show overdue tasks
-        2. Show tasks due today
-        3. Identify stalled projects
-        4. Suggest priorities for today
-        """
-    )
-
-    async with ClaudeSDKClient(options=options) as client:
-        await client.query("Run my daily review")
-
-        results = []
-        async for msg in client.receive_response():
-            if hasattr(msg, 'result'):
-                results.append(msg.result)
-
-        return results
-```
-
-## Integration Architecture
-
-### Capture Flow with BAML
+### Capture Flow
 
 ```
-User Input (text/voice)
+User Input (text/voice/share)
          ↓
-┌─────────────────────────┐
-│ BAML: ExtractTaskIntent │
-│   - Parse dates         │
-│   - Match tags/projects │
-│   - Detect subtasks     │
-└──────────┬──────────────┘
-           ↓
-┌─────────────────────────┐
-│ BAML: CheckDuplicate    │
-│   - Compare to existing │
-│   - Suggest action      │
-└──────────┬──────────────┘
-           ↓
-     Confirmation UI
-           ↓
-     Create Task(s)
-```
-
-### Agent Workflow with Claude SDK
-
-```
-User Query ("What should I do next?")
+    AI Extraction
+    (title, dates, tags, etc.)
          ↓
-┌─────────────────────────┐
-│ Claude Agent SDK        │
-│   - Understands intent  │
-│   - Calls tools:        │
-│     • search_tasks      │
-│     • get_suggestions   │
-│   - Formats response    │
-└──────────┬──────────────┘
-           ↓
-     Natural Language Response
-     + Structured Suggestions
+    Duplicate Check
+         ↓
+    User Confirmation
+         ↓
+    Create Task
 ```
 
-### Combined Architecture
+### Suggestion Flow
 
 ```
-┌────────────────────────────────────────────────────────┐
-│                    API Layer                           │
-├────────────────────────────────────────────────────────┤
-│                                                        │
-│  ┌──────────────┐    ┌──────────────────────────────┐ │
-│  │    BAML      │    │    Claude Agent SDK          │ │
-│  │              │    │                              │ │
-│  │ • Extraction │    │ • Conversational interface   │ │
-│  │ • Validation │    │ • Multi-step workflows       │ │
-│  │ • Parsing    │    │ • Tool orchestration         │ │
-│  └──────┬───────┘    └──────────────┬───────────────┘ │
-│         │                           │                  │
-│         └─────────────┬─────────────┘                  │
-│                       │                                │
-│              ┌────────▼────────┐                       │
-│              │   Task Database │                       │
-│              │   (API-first)   │                       │
-│              └─────────────────┘                       │
-│                                                        │
-└────────────────────────────────────────────────────────┘
+User asks "What's next?"
+         ↓
+    Gather Context
+    (time, location, calendar, energy)
+         ↓
+    Score Available Tasks
+         ↓
+    Apply Diversity Rules
+         ↓
+    Present Top Suggestions
 ```
 
-## Best Practices
+## Related Specifications
 
-### BAML Best Practices
-
-1. **Be specific in prompts**: Include examples and edge cases
-2. **Use @description**: Add context for enum values and fields
-3. **Set confidence thresholds**: Don't auto-accept low confidence extractions
-4. **Handle errors gracefully**: BAML retries on parse failure
-5. **Version your schemas**: Breaking changes need migration
-
-### Claude Agent SDK Best Practices
-
-1. **Limit tool scope**: Only expose necessary tools
-2. **Set max_turns**: Prevent runaway agent loops
-3. **Use system prompts**: Guide agent behavior clearly
-4. **Validate tool inputs**: Don't trust agent-provided args blindly
-5. **Log tool calls**: Audit trail for debugging
+- `improved_specs/ai-capture.md` - Task capture details
+- `improved_specs/ai-suggestions.md` - Suggestion system
+- `improved_specs/ai-search.md` - Search and queries
 
 ## Sources
 
 - [BAML Documentation](https://docs.boundaryml.com/home)
-- [BAML GitHub](https://github.com/BoundaryML/baml)
-- [Structured Output Comparison](https://boundaryml.com/blog/structured-output-from-llms)
-- [Claude Agent SDK Docs](https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk)
-- [BAML vs Instructor](https://dev.to/rosgluk/baml-vs-instructor-structured-llm-outputs-2p2b)
+- [Structured Output from LLMs](https://boundaryml.com/blog/structured-output-from-llms)
+- [Claude Agent SDK](https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk)
