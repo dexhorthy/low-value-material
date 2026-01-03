@@ -87,15 +87,17 @@ AI enhancements:
 - [x] Smart notifications via connected channels
 
 ### Priority 6: Predictive Scheduling (LOW)
-**Status**: Not Started
+**Status**: COMPLETED
 **Base Specs**: due-dates.md, defer-dates.md, repeat.md
 
+See `improved_specs/ai-scheduling.md` for full specification.
+
 AI enhancements:
-- [ ] Duration estimation based on similar tasks
-- [ ] Optimal defer date suggestions
-- [ ] Repeat pattern detection from behavior
-- [ ] Calendar-aware scheduling
-- [ ] Workload balancing suggestions
+- [x] Duration estimation based on similar tasks
+- [x] Optimal defer date suggestions
+- [x] Repeat pattern detection from behavior
+- [x] Calendar-aware scheduling
+- [x] Workload balancing suggestions
 
 ### Priority 7: Natural Language Search & Queries (LOW)
 **Status**: Not Started
@@ -117,6 +119,7 @@ AI enhancements:
 | 2026-01-03 | Priority 3: Smart Organization | COMPLETED | Created `ai-organization.md` with auto-tagging, task breakdown, project clustering, templates, related tasks |
 | 2026-01-03 | Priority 4: AI-Assisted Review | COMPLETED | Created `ai-review.md` with health scoring, zombie detection, stalled projects, cleanup suggestions |
 | 2026-01-03 | Priority 5: MCP Integration | COMPLETED | Created `mcp-integration.md` with task automation, webhooks, context enrichment, progress tracking |
+| 2026-01-03 | Priority 6: Predictive Scheduling | COMPLETED | Created `ai-scheduling.md` with duration estimation, timing suggestions, pattern detection, workload balancing |
 
 ## Implementation Notes
 
