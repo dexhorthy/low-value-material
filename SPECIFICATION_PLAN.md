@@ -43,7 +43,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 |------|--------|------|
 | Focus Mode | ✅ Done | `specs/focus-mode.md` |
 | Quick Capture | ✅ Done | `specs/quick-capture.md` |
-| Search | Not Started | `specs/search.md` |
+| Search | ✅ Done | `specs/search.md` |
 | Batch Editing | Not Started | `specs/batch-editing.md` |
 
 ### Priority 5: Platform Features
@@ -248,3 +248,18 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Rapid entry with double-return for batch capture
   - Settings: hotkey, layout, visible fields, defaults
   - Offline capture with sync on reconnect
+
+### 2026-01-03 - Iteration 16
+- Researched OmniFocus search and Quick Open functionality
+- Researched search scopes, fields, and matching algorithms
+- Created search.md specification covering:
+  - Three search modes: Outline Search, Quick Open, Sidebar Search
+  - Search scopes: here, remaining, everything
+  - Searchable fields: title, note, tags (with weighting)
+  - Smart match algorithm: start-of-word, contains, case insensitive
+  - Search operators: space (AND), quotes (phrase), minus (exclude)
+  - Optional field-specific operators: title:, note:, tag:, project:
+  - Quick Open for navigation with ⌘O
+  - Result ranking by relevance and recency
+  - Keyboard shortcuts and navigation
+  - Focus mode interaction settings
