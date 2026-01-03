@@ -6,16 +6,16 @@ This specification extends `specs/inbox.md` with AI-native capture and processin
 
 Traditional task capture requires manual field entry. AI-native capture inverts this:
 1. User provides unstructured input (text, voice, clipboard, URL)
-2. System extracts structured task data via LLM
+2. System intelligently extracts and structures task data
 3. User confirms or adjusts before saving
 
-This reduces capture friction from ~30 seconds to ~3 seconds while improving data quality.
+This reduces capture friction while improving data quality.
 
 ## Input Modalities
 
 ### Text Input
 
-Natural language text processed via LLM to extract task components:
+Type or paste natural language text to capture a task:
 
 ```
 Input: "Call mom tomorrow at 3pm about her birthday party"
@@ -24,36 +24,33 @@ Extracted:
   title: "Call mom about her birthday party"
   due_date: [tomorrow 15:00]
   suggested_tags: ["@calls", "family"]
-  confidence: 0.95
 ```
 
 ### Voice Input
 
-Native speech-to-text with post-processing:
+Speak naturally to capture a task. The system understands context clues:
 
 ```
 Voice: "Remind me to pick up the dry cleaning when I'm near downtown"
 
-Transcription → LLM Processing:
+Extracted:
   title: "Pick up dry cleaning"
   suggested_tags: ["@errands", "downtown"]
   location_trigger: "downtown area"
-  confidence: 0.88
 ```
 
-The user can review and edit the extracted information before saving, ensuring accuracy.
+The user can review and edit the extracted information before saving.
 
 ### Clipboard/Share Sheet
 
-Content-aware parsing for pasted or shared content:
+When you paste or share content, the system intelligently extracts task information:
 
-| Content Type | Extraction |
+| Content Type | Extracted As |
 |--------------|------------|
-| Email | Subject → title, sender → tag, dates → due/defer |
-| URL | Page title → title, domain → tag, article content → note |
-| Calendar invite | Event → title, time → due_date, attendees → tags |
-| Image | OCR → title/note, object detection → tags |
-| Plain text | NLP parsing → full task structure |
+| Email | Title from subject, tags from sender, due dates from content |
+| URL | Title from page, tags from domain, details from content |
+| Calendar invite | Title from event, due date from time, tags from attendees |
+| Text or image | Title and details extracted from content |
 
 ### Global Launcher (Desktop)
 
@@ -83,82 +80,68 @@ Launcher features:
 - Siri/Assistant integration
 - Lock screen quick capture (iOS 18+)
 
-## LLM Task Extraction
+## What Gets Extracted
 
-### What Gets Extracted
-
-When processing user input, the system extracts:
+When processing user input, the system extracts and suggests:
 
 **Core Task Information**
 - Title: A clear, actionable task title
 - Note: Additional details or context
 
 **Date Information**
-- Due date with original text ("tomorrow", "next Tuesday")
+- Due date from natural language ("tomorrow", "next Tuesday")
 - Defer date if mentioned
-- Confidence level for each date interpretation
 
-**Organization Suggestions**
-- Matching or new project suggestion
-- Relevant tag suggestions (existing or new)
-- Each with confidence scores
+**Organization**
+- Matching project suggestion
+- Relevant tag suggestions
 
 **Task Metadata**
 - Estimated duration
-- Urgency indicators
 - Whether task is waiting on someone else
 
-**Multi-Task Detection**
-- If input contains multiple tasks, each is extracted separately
+### Understanding Date References
 
-**Confidence & Clarification**
-- Overall confidence score
-- List of areas needing clarification
+The system understands natural date language:
 
-### Date/Time Parsing
-
-The LLM handles complex temporal expressions:
-
-| Input | Parsed |
+| Input | Interpreted As |
 |-------|--------|
 | "tomorrow" | next calendar day |
-| "next Tuesday" | next Tuesday (not today if Tuesday) |
-| "in 3 days" | current date + 3 days |
+| "next Tuesday" | next Tuesday |
+| "in 3 days" | 3 days from now |
 | "end of month" | last day of current month |
-| "after the meeting" | requires context (calendar lookup) |
-| "before vacation" | requires context (calendar/project lookup) |
 | "Q2" | April 1 - June 30 |
-| "3pm" | today 15:00 if future, else tomorrow 15:00 |
+| "3pm" | today at 3pm, or tomorrow if in the past |
 
-Ambiguous dates trigger clarification:
+When ambiguous, the system asks:
 ```
 Input: "meeting on the 15th"
 
-Clarification: "Which month? November 15 or December 15?"
-Options: [Nov 15] [Dec 15] [Other...]
+Which month? November 15 or December 15?
+[Nov 15] [Dec 15] [Other...]
 ```
 
-### Project/Tag Matching
+### Project and Tag Suggestions
 
-Fuzzy matching against existing entities:
+The system suggests matching projects and tags based on your input:
 
 ```
 Input: "Fix the login bug for acme project"
 
-Project matching:
-  - "Acme Corp Website" (0.85 confidence)
-  - "Acme Mobile App" (0.72 confidence)
+Project suggestions:
+  - "Acme Corp Website"
+  - "Acme Mobile App"
 
-Tag matching:
-  - "@bugs" (0.91 confidence)
-  - "@development" (0.78 confidence)
+Tag suggestions:
+  - "@bugs"
+  - "@development"
 ```
 
-The system tries to match against existing projects and tags, showing the most likely options with confidence indicators so the user can accept or correct them.
+The system shows the most likely matches so you can select or correct them.
 
-### Multi-Task Detection
+### Multiple Tasks
 
-The LLM detects when input contains multiple tasks:
+When your input contains multiple tasks, the system separates them:
 
 ```
 Input: "Need to buy groceries, call the dentist, and finish the report by Friday"
@@ -168,7 +151,7 @@ Extracted tasks:
   2. "Call the dentist" (tags: @calls)
   3. "Finish the report" (due: Friday)
 
-UI prompt: "Create 3 separate tasks?"
+Prompt: "Create 3 separate tasks?"
 ```
 
 ### Context Enhancement
@@ -182,9 +165,9 @@ When you reference calendar events, locations, recent tasks, or external content
 
 AI extraction requires user confirmation to prevent errors:
 
-### Quick Confirm (High Confidence)
+### Quick Confirm
 
-When confidence > 0.9:
+When the extraction is clear and accurate:
 ```
 ┌────────────────────────────────────────────┐
 │ ✓ Call mom about her birthday party        │
@@ -195,9 +178,9 @@ When confidence > 0.9:
 └────────────────────────────────────────────┘
 ```
 
-### Detailed Review (Lower Confidence)
+### Detailed Review
 
-When confidence < 0.9 or clarification needed:
+When you need to verify or adjust the extracted information:
 ```
 ┌────────────────────────────────────────────┐
 │ Title: [Call mom about her birthday party] │
@@ -230,9 +213,7 @@ When multiple tasks detected:
 
 ## Smart Duplicate Detection
 
-Before creating a task, the system checks for potential duplicates and presents options to the user.
-
-The system checks for potential duplicates using multiple approaches—exact title matches, similar wording, same semantic meaning, and tasks created very recently. When a potential duplicate is found, the user can decide to update the existing task or create a new one.
+Before creating a task, the system checks for potential duplicates and presents options to the user. When a similar task is found, you can decide to update the existing task or create a new one.
 
 UI for duplicates:
 ```
@@ -246,22 +227,14 @@ UI for duplicates:
 └────────────────────────────────────────────┘
 ```
 
-## Capture Metadata
 
-Each captured task retains metadata about how it was created:
+## Improving Over Time
 
-- **Capture source**: How the task was input (text, voice, share, email, clipboard, API)
-- **Original input**: The raw user input before processing
-- **Extraction confidence**: How confident the AI was in its interpretation
-- **User modifications**: Which fields the user changed from AI suggestions
+As you capture tasks and make adjustments, the system learns your preferences:
 
-## Learning from Corrections
-
-The system improves over time by tracking when users modify AI suggestions:
-
-- Fine-tunes project and tag matching based on corrections
-- Improves date parsing for the user's vocabulary and patterns
-- Learns the user's preferred task naming conventions
+- Better project and tag suggestions
+- Improved understanding of your date language and patterns
+- Understanding of how you prefer to name tasks
 
 ## Settings
 
@@ -270,44 +243,17 @@ The system improves over time by tracking when users modify AI suggestions:
 | Auto-suggest tags | On | Suggest tags based on task content |
 | Auto-suggest project | On | Suggest project based on task content |
 | Auto-extract dates | On | Extract dates from natural language |
-| Confidence threshold | 90% | Threshold for auto-confirm (lower = more review) |
 | Duplicate check | On | Check for duplicates before creating |
 | Learn from corrections | On | Improve suggestions based on your edits |
 | Voice capture | On | Enable voice input |
 | Global hotkey | Cmd+Shift+Space | Desktop quick capture shortcut |
 
-## Privacy Considerations
+## Privacy & Security
 
-- Users can disable cloud-based AI extraction if preferred
-- Task content is not shared with third parties without explicit consent
-- Users have full control over their data and can view what's being processed
-- A local-only mode is available for those who prioritize privacy over full AI features
-
-## Edge Cases
-
-### Empty Input
-- Ignore empty submissions
-- Prompt for input if launcher opened with no content
-
-### Ambiguous Intent
-- Ask clarifying questions
-- Provide multiple interpretations to choose from
-- Default to conservative interpretation
-
-### Unsupported Language
-- Fallback to basic text capture
-- Store original for later processing
-- Indicate limited AI support
-
-### Network Unavailable
-- Queue for later AI processing
-- Allow basic capture without AI
-- Process queued items when online
-
-### Very Long Input
-- Summarize for title
-- Store full text in note
-- Extract multiple tasks if appropriate
+- You control how your task data is handled
+- Task content isn't shared with third parties without your consent
+- You can view and control what data is being used for suggestions
+- A privacy-focused mode is available if you prefer local-only processing
 
 ## Related Specifications
 
@@ -315,12 +261,3 @@ The system improves over time by tracking when users modify AI suggestions:
 - `specs/task.md` - Task data model
 - `improved_specs/ai-suggestions.md` - AI task recommendations
 - `improved_specs/mcp-integration.md` - Tool integration for capture
-
-## Sources
-
-Research informing this specification:
-- [AI Task Managers 2025](https://monday.com/blog/task-management/ai-task-manager/)
-- [LLM Intent Detection](https://medium.com/@jps.soares/using-llms-for-intent-detection-c378cd824962)
-- [Intent Assistant Research](https://intentassistant.github.io/)
-- [Large Action Models](https://www.exxactcorp.com/blog/deep-learning/large-action-models-llms-for-performing-tasks)
-- [NLP Models 2025](https://lumenalta.com/insights/7-of-the-best-natural-language-processing-models-in-2025)
