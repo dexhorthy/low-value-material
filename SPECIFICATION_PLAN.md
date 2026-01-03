@@ -34,7 +34,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Spec | Status | File |
 |------|--------|------|
 | Perspectives Core | ✅ Done | `specs/perspectives.md` |
-| Forecast View | Not Started | `specs/forecast.md` |
+| Forecast View | ✅ Done | `specs/forecast.md` |
 | Review System | Not Started | `specs/review.md` |
 | Custom Perspectives | Not Started | `specs/custom-perspectives.md` |
 
@@ -178,3 +178,17 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Sorting options with multiple criteria and direction
   - Sidebar/Home configuration and ordering
   - Syncing and version compatibility
+
+### 2026-01-03 - Iteration 11
+- Researched OmniFocus Forecast perspective and date-based views
+- Researched Forecast tag, calendar integration, and piano keys UI
+- Created forecast.md specification covering:
+  - Timeline structure with "piano keys" date tiles
+  - ForecastDay object with status, badge, and item sections
+  - Badge color logic: none, available, due_soon, overdue
+  - Sections: Calendar Events, Due, Deferred, Tagged, Planned
+  - Forecast tag for "do today" items without fake due dates
+  - Calendar integration with system calendars
+  - Drag-and-drop date modification with modifier keys
+  - Past (overdue) and Future sections
+  - Quick reschedule operations
