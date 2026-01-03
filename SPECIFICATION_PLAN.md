@@ -20,7 +20,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Project | ✅ Done | `specs/project.md` |
 | Folder | ✅ Done | `specs/folder.md` |
 | Tag | ✅ Done | `specs/tag.md` |
-| Inbox | Not Started | `specs/inbox.md` |
+| Inbox | ✅ Done | `specs/inbox.md` |
 
 ### Priority 2: Date/Time System
 | Spec | Status | File |
@@ -93,3 +93,16 @@ OmniFocus is a task management application built around the Getting Things Done 
   - `children_mutually_exclusive` for exclusive groups (e.g., priority levels)
   - Location-based tags with coordinates and radius
   - Tag inheritance from projects to tasks at creation time
+
+### 2026-01-03 - Iteration 5
+- Researched OmniFocus Inbox and GTD capture workflow
+- Created inbox.md specification covering:
+  - Inbox as special capture container (not a project/folder)
+  - Inbox items are tasks with null project_id/parent_task_id
+  - Full task properties available on inbox items (dates, tags, flags)
+  - Tentative assignment for batch processing with Clean Up
+  - Capture methods: direct entry, Quick Entry, external capture
+  - Processing operations: assign to project, convert to project, complete directly
+  - Availability rules for inbox items (no sequential blocking)
+  - Two-minute rule integration for GTD practitioners
+- Priority 1: Core Data Model is now COMPLETE
