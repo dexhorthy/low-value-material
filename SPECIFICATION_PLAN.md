@@ -89,6 +89,11 @@ OmniFocus is a task management application built around the Getting Things Done 
 | AI Forecast | ✅ Done | `improved_specs/ai-forecast.md` |
 | AI Focus Mode | ✅ Done | `improved_specs/ai-focus-mode.md` |
 
+### Priority 10: System Configuration
+| Spec | Status | File |
+|------|--------|------|
+| Settings & Preferences | ✅ Done | `specs/settings.md` |
+
 ## Research Sources
 - [OmniFocus Features](https://www.omnigroup.com/omnifocus/features)
 - [Zapier GTD + OmniFocus Guide](https://zapier.com/blog/getting-things-done-gtd-omnifocus/)
@@ -522,4 +527,36 @@ OmniFocus is a task management application built around the Getting Things Done 
 - Updated SPECIFICATION_PLAN.md with templates.md in Priority 6
 - COMPLETE: 40 total specifications across 9 priority tiers
   - 26 core specifications in specs/
+  - 14 AI-enhanced specifications in improved_specs/
+
+### 2026-01-03 - Iteration 29
+- Identified Settings and Preferences as missing cross-cutting specification
+- Researched OmniFocus 4 settings via official documentation (macOS, iOS)
+- Researched hidden preferences system and advanced configuration options
+- Created settings.md specification covering:
+  - 14 settings categories: General, Organization, Appearance, Layout, Dates & Times, Notifications, Focus Mode, Quick Capture, Sync, Backup, Advanced, Privacy & Security, Accessibility, Update
+  - Synced vs local settings distinction with sync behavior
+  - General settings: outlining mode, keyboard shortcuts, delete confirmation
+  - Organization settings: inbox cleanup rules, resolved item handling, default project type
+  - Appearance settings: color palette, font size, visual indicators, app icon
+  - Layout settings: fluid vs columns, field configuration, inspector setup
+  - Dates & Times: due soon threshold, default times, review interval, floating time zones
+  - Notifications: default notifications, sounds, badges (app icon, perspectives, sidebar)
+  - Focus Mode: remember focus, inbox visibility, search scope
+  - Quick Capture: layout, visible fields, default project/tags
+  - Sync: server configuration, automatic sync, push notifications, sync interval
+  - Backup: automatic backup, frequency, retention
+  - Advanced: auto-complete projects, all-day events, snooze interval, bulk deletion threshold
+  - Privacy & Security: app lock, biometric unlock, anonymous usage data
+  - Accessibility: VoiceOver optimizations, reduce motion, increase contrast
+  - Update: check for updates, update channel
+  - Hidden preferences system via omnifocus:///change-preference URLs
+  - Settings persistence (database for synced, local preferences for device-specific)
+  - Settings migration between versions
+  - Import/export format (JSON)
+  - Platform differences matrix (macOS, iOS, iPadOS, Web, visionOS)
+  - Integration with 15+ other specifications
+- Added Priority 10: System Configuration to track cross-cutting concerns
+- COMPLETE: 41 total specifications across 10 priority tiers
+  - 27 core specifications in specs/
   - 14 AI-enhanced specifications in improved_specs/
