@@ -44,7 +44,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Focus Mode | ✅ Done | `specs/focus-mode.md` |
 | Quick Capture | ✅ Done | `specs/quick-capture.md` |
 | Search | ✅ Done | `specs/search.md` |
-| Batch Editing | Not Started | `specs/batch-editing.md` |
+| Batch Editing | ✅ Done | `specs/batch-editing.md` |
 
 ### Priority 5: Platform Features
 | Spec | Status | File |
@@ -263,3 +263,15 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Result ranking by relevance and recency
   - Keyboard shortcuts and navigation
   - Focus mode interaction settings
+
+### 2026-01-03 - Iteration 17
+- Reviewed existing batch-editing.md specification
+- Verified comprehensive coverage of:
+  - Selection model: enter mode, selection actions, scope, persistence
+  - Inspector with multiple selection: mixed value display, editing behavior
+  - Editable fields matrix (title/note not editable, tags additive)
+  - Bulk operations: move, delete, convert, complete/drop, flag
+  - Outline operations: reordering, grouping, indent/outdent
+  - Keyboard shortcuts and edit mode (mobile)
+  - Constraints: selection limits, type mixing, view restrictions
+- Priority 4: Organization Features is now COMPLETE
