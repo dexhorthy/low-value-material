@@ -61,15 +61,17 @@ AI enhancements:
 - [x] Related task discovery
 
 ### Priority 4: AI-Assisted Review Process (MEDIUM)
-**Status**: Not Started
+**Status**: COMPLETED
 **Base Specs**: project.md (review system)
 
+See `improved_specs/ai-review.md` for full specification.
+
 AI enhancements:
-- [ ] Smart review prioritization
-- [ ] Stalled project detection with suggested actions
-- [ ] "Zombie" task identification (old, untouched)
-- [ ] Project health scoring
-- [ ] Automated cleanup suggestions
+- [x] Smart review prioritization
+- [x] Stalled project detection with suggested actions
+- [x] "Zombie" task identification (old, untouched)
+- [x] Project health scoring
+- [x] Automated cleanup suggestions
 
 ### Priority 5: MCP/Tool Integration Layer (MEDIUM)
 **Status**: Not Started
@@ -111,6 +113,7 @@ AI enhancements:
 | 2026-01-03 | Priority 1: AI-Powered Capture | COMPLETED | Created `ai-capture.md` with NLP parsing, voice input, duplicate detection, global launcher |
 | 2026-01-03 | Priority 2: Intelligent Task Suggestions | COMPLETED | Created `ai-suggestions.md` with scoring engine, context awareness, deadline risk, morning briefing |
 | 2026-01-03 | Priority 3: Smart Organization | COMPLETED | Created `ai-organization.md` with auto-tagging, task breakdown, project clustering, templates, related tasks |
+| 2026-01-03 | Priority 4: AI-Assisted Review | COMPLETED | Created `ai-review.md` with health scoring, zombie detection, stalled projects, cleanup suggestions |
 
 ## Implementation Notes
 
