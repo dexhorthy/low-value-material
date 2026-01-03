@@ -57,7 +57,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Spec | Status | File |
 |------|--------|------|
 | Attachments | ✅ Done | `specs/attachments.md` |
-| Rich Text Notes | ⏳ Pending | `specs/notes.md` |
+| Rich Text Notes | ✅ Done | `specs/notes.md` |
 | Automation | ⏳ Pending | `specs/automation.md` |
 
 ## Research Sources
@@ -347,3 +347,21 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Mail Drop integration for email attachments
   - Automation support via URL scheme, Shortcuts, Omni Automation
 - Added Priority 6: Data Model Extensions to track remaining specs
+
+### 2026-01-03 - Iteration 22
+- Researched OmniFocus rich text notes and RTF formatting support
+- Researched Omni Automation Text and Style objects for note manipulation
+- Researched Format menu options and keyboard shortcuts
+- Created notes.md specification covering:
+  - Dual access: `note` (plain text) and `note_text` (rich TextObject)
+  - Text Object structure with attribute runs and ranges
+  - Style Object with font, paragraph, decoration, and advanced attributes
+  - Supported formatting via Format menu (bold, italic, underline, strikethrough, etc.)
+  - Style management: Copy Style, Paste Style, Clear Style, Simplify Style
+  - Link embedding with URL properties and behavior
+  - Inline attachments within note text flow
+  - Text manipulation operations: insert, append, replace, remove
+  - Search operations within notes
+  - Note: Markdown NOT supported; uses Rich Text Format (RTF)
+  - Platform considerations for macOS, iOS, Web, Vision Pro
+  - Automation via URL scheme, Shortcuts, and Omni Automation JavaScript
