@@ -6,6 +6,6 @@
 
 2. update SPECIFICATION_PLAN.md with your progress
 
-3. use `git add -A` and `git commit -m "..."` to commit your changes - do not include any claude attribution
+3. use `git add file1 file2 ...` and `git commit -m "..."` to commit your changes - do not include any claude attribution
 
 4. use `git push origin main` to push your commits
