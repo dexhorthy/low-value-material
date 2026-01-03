@@ -147,6 +147,43 @@ AI enhancements:
 - [x] Location-aware smart triggers with travel time prediction
 - [x] Notification feedback loop for continuous improvement
 
+### Priority 10: AI-Enhanced Batch Editing (MEDIUM)
+**Status**: COMPLETED
+**Base Specs**: batch-editing.md
+
+See `improved_specs/ai-batch-editing.md` for full specification.
+
+AI enhancements:
+- [x] Smart selection - AI identifies items that should be edited together
+- [x] Natural language batch commands ("Move these to Marketing, tag as urgent")
+- [x] Intelligent grouping - automatic clustering of similar items
+- [x] Proactive batch suggestions when editing patterns detected
+- [x] AI-assisted inbox processing with guided batch workflows
+- [x] Pattern learning from user batch editing behavior
+- [x] Mixed value display with AI-suggested common operations
+
+### Priority 11: AI-Powered Focus Mode (LOW)
+**Status**: NOT STARTED
+**Base Specs**: focus-mode.md
+
+Planned AI enhancements:
+- [ ] AI-suggested focus sessions based on task context
+- [ ] Automatic focus mode when detecting deep work needs
+- [ ] Smart focus scope recommendations
+- [ ] Integration with system Focus modes (work, personal)
+- [ ] Focus session analytics and optimization
+
+### Priority 12: AI-Enhanced Forecast View (LOW)
+**Status**: NOT STARTED
+**Base Specs**: forecast.md
+
+Planned AI enhancements:
+- [ ] AI-powered day planning with workload optimization
+- [ ] Predictive scheduling based on task patterns
+- [ ] Smart time blocking recommendations
+- [ ] Workload prediction and warnings
+- [ ] Calendar-aware task suggestions
+
 ## Progress Log
 
 | Date | Item | Status | Notes |
@@ -165,6 +202,7 @@ AI enhancements:
 | 2026-01-03 | Wishlist: Tag Cleanup | ALREADY DONE | Already covered in `ai-organization.md` Tag Lifecycle Management section |
 | 2026-01-03 | Priority 8: AI Notes & Attachments | COMPLETED | Created `ai-notes-attachments.md` with voice transcription, OCR, document summarization, task extraction |
 | 2026-01-03 | Priority 9: AI Notifications & Smart Alerts | COMPLETED | Created `ai-notifications.md` with smart timing, bundling, predictive reminders, fatigue prevention |
+| 2026-01-03 | Priority 10: AI-Enhanced Batch Editing | COMPLETED | Created `ai-batch-editing.md` with smart selection, NL commands, clustering, inbox assistant |
 
 ## Implementation Notes
 
