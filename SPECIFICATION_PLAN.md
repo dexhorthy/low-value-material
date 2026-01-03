@@ -19,7 +19,7 @@ OmniFocus is a task management application built around the Getting Things Done 
 | Task/Action | ✅ Done | `specs/task.md` |
 | Project | ✅ Done | `specs/project.md` |
 | Folder | ✅ Done | `specs/folder.md` |
-| Tag | Not Started | `specs/tag.md` |
+| Tag | ✅ Done | `specs/tag.md` |
 | Inbox | Not Started | `specs/inbox.md` |
 
 ### Priority 2: Date/Time System
@@ -82,3 +82,14 @@ OmniFocus is a task management application built around the Getting Things Done 
   - Containment rules (folders contain folders and projects, not tasks)
   - Flattened queries for nested content
   - Status effects on contained items
+
+### 2026-01-03 - Iteration 4
+- Researched tags (formerly contexts) in depth
+- Created tag.md specification covering:
+  - Multi-tag assignment (improvement over single-context)
+  - Hierarchical/nested tags
+  - Status enum (active, on_hold, dropped) with availability effects
+  - `allows_next_action` for blocking tags (e.g., "Waiting For")
+  - `children_mutually_exclusive` for exclusive groups (e.g., priority levels)
+  - Location-based tags with coordinates and radius
+  - Tag inheritance from projects to tasks at creation time
