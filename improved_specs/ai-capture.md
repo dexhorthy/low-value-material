@@ -42,8 +42,8 @@ Transcription → LLM Processing:
 ```
 
 Voice processing pipeline:
-1. Native STT (Whisper, system APIs)
-2. LLM intent detection and entity extraction
+1. Speech-to-text transcription
+2. Intent detection and entity extraction
 3. Confidence scoring
 4. Confirmation UI (with edit capability)
 
@@ -159,10 +159,10 @@ Tag matching:
 ```
 
 Matching strategies:
-1. Exact name match (confidence: 1.0)
-2. Fuzzy name match (confidence: 0.7-0.95)
-3. Semantic similarity (confidence: 0.5-0.8)
-4. Historical assignment patterns (confidence: 0.6-0.9)
+1. Exact name match (highest confidence)
+2. Fuzzy name match (high confidence)
+3. Semantic similarity (medium confidence)
+4. Historical assignment patterns (medium confidence)
 
 ### Multi-Task Detection
 
