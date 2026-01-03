@@ -48,17 +48,17 @@ Core infrastructure and data model:
 | Unit tests | ✅ Done | core package tests passing |
 
 ### Phase 2: Core Data Model
-**Status**: Not Started
+**Status**: COMPLETE
 
 Complete the data model from specs:
 
 | Feature | Status | Spec |
 |---------|--------|------|
-| Project entity | ⏳ Pending | specs/project.md |
-| Folder entity | ⏳ Pending | specs/folder.md |
-| Tag entity | ⏳ Pending | specs/tag.md |
-| Inbox behavior | ⏳ Pending | specs/inbox.md |
-| Entity relationships | ⏳ Pending | foreign keys, cascades |
+| Project entity | ✅ Done | specs/project.md - Drizzle schema, Zod types, oRPC CRUD |
+| Folder entity | ✅ Done | specs/folder.md - Hierarchical folders with status |
+| Tag entity | ✅ Done | specs/tag.md - Many-to-many with tasks/projects, location support |
+| Inbox behavior | ✅ Done | specs/inbox.md - Tentative assignments, clean-up, stats |
+| Entity relationships | ✅ Done | foreign keys, cascades, junction tables |
 
 ### Phase 3: Date/Time System
 **Status**: Not Started
@@ -128,6 +128,12 @@ Complete the data model from specs:
 | 2026-01-03 | Phase 1 | Set up Docker Compose for Postgres + Electric SQL |
 | 2026-01-03 | Phase 1 | Added unit tests for core package |
 | 2026-01-03 | Phase 1 | All checks passing (typecheck, lint, tests) |
+| 2026-01-03 | Phase 2 | Created Folder entity (schema, types, API) |
+| 2026-01-03 | Phase 2 | Created Project entity with type enum (parallel/sequential/single_actions) |
+| 2026-01-03 | Phase 2 | Created Tag entity with many-to-many relations and location support |
+| 2026-01-03 | Phase 2 | Added Inbox behavior with tentative assignments |
+| 2026-01-03 | Phase 2 | Created junction tables for task-tag and project-tag relationships |
+| 2026-01-03 | Phase 2 | Added unit tests for new schemas (19 tests passing) |
 
 ## Commands
 
@@ -158,7 +164,11 @@ docker compose down  # Stop services
 3. ~~Set up Docker Compose for local development~~ ✅
 4. ~~Create packages/api with basic oRPC procedures~~ ✅
 5. ~~Create apps/cli with Ink scaffold~~ ✅
-6. Implement Project entity (Phase 2)
-7. Implement Folder entity (Phase 2)
-8. Implement Tag entity (Phase 2)
-9. Add Electric SQL sync layer (Phase 6)
+6. ~~Implement Project entity (Phase 2)~~ ✅
+7. ~~Implement Folder entity (Phase 2)~~ ✅
+8. ~~Implement Tag entity (Phase 2)~~ ✅
+9. ~~Implement Inbox behavior (Phase 2)~~ ✅
+10. Generate and run database migrations (Phase 2)
+11. Implement due dates and defer dates (Phase 3)
+12. Implement repeat patterns (Phase 3)
+13. Add Electric SQL sync layer (Phase 6)

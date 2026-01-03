@@ -3,6 +3,10 @@ import { z } from "zod";
 import { db, tasks } from "@lvm/db";
 import { CreateTaskInput, UpdateTaskInput, TaskFilterSchema } from "@lvm/core";
 import { eq, and, lt, gt, isNull, desc, asc } from "drizzle-orm";
+import { folderRouter } from "./folder";
+import { projectRouter } from "./project";
+import { tagRouter } from "./tag";
+import { inboxRouter } from "./inbox";
 
 // Create a new task
 export const createTask = os
@@ -19,6 +23,8 @@ export const createTask = os
         deferDate: input.deferDate ?? null,
         projectId: input.projectId ?? null,
         parentTaskId: input.parentTaskId ?? null,
+        tentativeProjectId: input.tentativeProjectId ?? null,
+        tentativeParentTaskId: input.tentativeParentTaskId ?? null,
       })
       .returning();
     return task;
@@ -62,6 +68,11 @@ export const listTasks = os
     }
     if (input?.dueAfter) {
       conditions.push(gt(tasks.dueDate, input.dueAfter));
+    }
+    // Filter for inbox items only
+    if (input?.inboxOnly) {
+      conditions.push(isNull(tasks.projectId));
+      conditions.push(isNull(tasks.parentTaskId));
     }
 
     const result = await db
@@ -157,6 +168,10 @@ export const router = {
     restore: restoreTask,
     delete: deleteTask,
   },
+  folder: folderRouter,
+  project: projectRouter,
+  tag: tagRouter,
+  inbox: inboxRouter,
 };
 
 export type Router = typeof router;
