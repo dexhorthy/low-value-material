@@ -196,16 +196,9 @@ User (voice): "The first one"
 System: Got it. Creating perspective for tasks tagged @meetings.
 ```
 
-### On-Device Voice Processing
+### Privacy and Speed
 
-For privacy and speed, initial voice processing happens on-device when possible:
-
-| Stage | Processing Location | Latency |
-|-------|-------------------|---------|
-| Speech-to-text | On-device | ~100ms |
-| Intent detection | On-device (simple) / Cloud (complex) | 50-300ms |
-| Filter generation | Cloud | ~200ms |
-| Task matching | Local database | ~50ms |
+For privacy and responsiveness, the system prioritizes on-device processing when possible. This means voice recognition feels instant and your voice data stays on your device for initial processing.
 
 ## Proactive Perspective Suggestions
 
